@@ -1,18 +1,17 @@
 {
-  "name": "valo-twitter-experiment",
+  "name": "game of life experiment",
   "version": "0.0.1",
-  "description": "A Twitter streaming client experiment application powered by valo",
-  "main": "main.js",
+  "description": "Conway's game of life implementation",
+  "main": "lib/entry.js",
   "scripts": {
     "start": "http-server public",
-    "build": "cd ./public && browserify -e js/index.js -o bundle.js -t es6ify"
+    "build": "cd ./public && browserify -e js/entry.js -o bundle.js -t es6ify"
   },
   "repository": "",
   "author": "Zuri Pabon",
   "license": "",
   "dependencies": {
-    "lodash": "^3.6.0",
-    "processing-js": "^1.4.13"
+    "lodash": "^3.6.0"
   },
   "devDependencies": {
     "browserify": "^9.0.8",
