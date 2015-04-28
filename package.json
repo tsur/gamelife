@@ -1,0 +1,21 @@
+{
+  "name": "valo-twitter-experiment",
+  "version": "0.0.1",
+  "description": "A Twitter streaming client experiment application powered by valo",
+  "main": "main.js",
+  "scripts": {
+    "start": "http-server public",
+    "build": "cd ./public && browserify -e js/index.js -o bundle.js -t es6ify"
+  },
+  "repository": "",
+  "author": "Zuri Pabon",
+  "license": "",
+  "dependencies": {
+    "lodash": "^3.6.0",
+    "processing-js": "^1.4.13"
+  },
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "es6ify": "^1.6.0"
+  }
+}
