@@ -1,12 +1,9 @@
-import * as game from './game.js';
+import game from './game';
 
 // Kick it off after window object has loaded (all resources were loaded)
-window.addEventListener('load', () => {
-
-  game.start(function(){
+game(function(){
   
       console.log('running game animation');
 
-  });
+});
 
-}, false);

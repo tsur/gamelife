@@ -67,7 +67,7 @@ function nextStep() {
         }, 300);
 }
 
-export function start(state) {
+export default function start(cb) {
 
     algorithm.init();
     
@@ -77,5 +77,7 @@ export function start(state) {
     canvas.clearWorld();
     canvas.drawWorld();
     nextStep();
+
+    cb();
 
 }

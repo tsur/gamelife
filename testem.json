@@ -1,0 +1,11 @@
+{
+    "framework": "mocha",
+    "serve_files": [ "test/browserified.js" ],
+    "src_files": [
+        "src/**/*.js",
+        "test/**/*.js"
+    ],
+    "before_tests": "jspm bundle-sfx test/index -o test/browserified.js",
+    "on_exit": "rm test/browserified.js*",
+    "launch_in_dev": [ "chrome" ]
+}
