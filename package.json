@@ -6,13 +6,16 @@
   "scripts": {
     "start": "jspm install && http-server",
     "build": "jspm bundle-sfx src/entry dist/bundle.js && jspm bundle-sfx src/entry dist/bundle.min.js --minify",
-    "test":"testem"
+    "test": "testem"
   },
   "repository": "",
   "author": "Zuri Pabon",
   "license": "",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "jspm": "^0.15.6",
+    "testem": "^0.8.3"
+  },
   "jspm": {
     "directories": {},
     "dependencies": {
