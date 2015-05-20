@@ -5,23 +5,34 @@ import * as canvas from './canvas';
 
 function loadState() {
 
-  return algorithm.convertToArray({
-    "39": [110],
-    "40": [112],
-    "41": [109, 110, 113, 114, 115]
-  });
+  var state, i, j, y;
 
+  state = JSON.parse('[{"39":[110]},{"40":[112]},{"41":[109,110,113,114,115]}]');
+
+  for (i = 0; i < state.length; i++) {
+
+    for (y in state[i]) {
+
+      for (j = 0; j < state[i][y].length; j++) {
+
+        algorithm.addCell(state[i][y][j], parseInt(y, 10));
+
+      }
+
+    }
+
+  }
 }
 
-function nextStep(state) {
+function nextStep() {
 
-  var i, x, y, r, algorithmTime, redrawList;
+  var i, x, y, r, liveCellNumber, algorithmTime, redrawList;
 
   // Algorithm run
 
   algorithmTime = (new Date());
 
-  var newState = algorithm.nextGeneration(state);
+  liveCellNumber = algorithm.nextGeneration();
 
   algorithmTime = (new Date()) - algorithmTime;
 
@@ -52,21 +63,22 @@ function nextStep(state) {
   }
   // Flow Control
   setTimeout(function() {
-    nextStep(newState);
+    nextStep();
   }, 300);
 }
 
 export
 default
-
 function start(cb) {
 
-  var state = loadState();
+  algorithm.init();
+
+  loadState();
 
   canvas.init();
   canvas.clearWorld();
-  canvas.drawWorld(state);
-  nextStep(state);
+  canvas.drawWorld();
+  nextStep();
 
   cb();
 

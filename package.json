@@ -4,17 +4,22 @@
   "description": "Conway's game of life implementation",
   "main": "lib/entry.js",
   "scripts": {
-    "start": "jspm install && http-server",
-    "build": "jspm bundle-sfx src/entry dist/bundle.js && jspm bundle-sfx src/entry dist/bundle.min.js --minify",
-    "test": "testem"
+    "start": "jspm install && npm run server",
+    "build-js": "jspm bundle-sfx src/entry dist/bundle.js && jspm bundle-sfx src/entry dist/bundle.min.js --minify",
+    "build-js:stable": "jspm bundle-sfx src/stable/entry dist/bundle.js && jspm bundle-sfx src/stable/entry dist/bundle.min.js --minify",
+    "watch-js": "watch 'npm run build-js' src",
+    "test": "testem",
+    "server": "http-server"
   },
   "repository": "",
   "author": "Zuri Pabon",
   "license": "",
   "dependencies": {},
   "devDependencies": {
+    "http-server": "^0.8.0",
     "jspm": "^0.15.6",
-    "testem": "^0.8.3"
+    "testem": "^0.8.3",
+    "watch": "^0.16.0"
   },
   "jspm": {
     "directories": {},

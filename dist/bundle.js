@@ -358,7 +358,7 @@
   System.register(...);
 }); */
 
-(['src/entry'], function(System) {
+(['src/stable/entry'], function(System) {
 
 System.register("npm:process@0.10.1/browser", [], true, function(require, exports, module) {
   var global = System.global,
@@ -4823,9 +4823,9 @@ System.register("npm:lodash@3.8.0", ["npm:lodash@3.8.0/index"], true, function(r
   return module.exports;
 });
 
-System.register("src/canvas", ["npm:lodash@3.8.0", "src/algorithm"], function($__export) {
+System.register("src/stable/canvas", ["npm:lodash@3.8.0", "src/stable/algorithm"], function($__export) {
   "use strict";
-  var __moduleName = "src/canvas";
+  var __moduleName = "src/stable/canvas";
   var _,
       algorithm,
       context,
@@ -4960,9 +4960,9 @@ System.register("src/canvas", ["npm:lodash@3.8.0", "src/algorithm"], function($_
   };
 });
 
-System.register("src/algorithm", ["npm:lodash@3.8.0"], function($__export) {
+System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export) {
   "use strict";
-  var __moduleName = "src/algorithm";
+  var __moduleName = "src/stable/algorithm";
   var _,
       actualState,
       redrawList,
@@ -4970,7 +4970,20 @@ System.register("src/algorithm", ["npm:lodash@3.8.0"], function($__export) {
       bottomPointer,
       middlePointer;
   function init(state) {
-    actualState = [];
+    return new Array();
+  }
+  function convertToPOJO(state) {
+    if (!_.isArray(state) || _.isEmpty(state)) {
+      return new Object();
+    }
+    state = _.filter(state, (function(e) {
+      return _.isArray(e) && !_.isEmpty(e);
+    }));
+    return _.zipObject(_.map(state, (function(e) {
+      return _.first(e);
+    })), _.map(state, (function(e) {
+      return _.uniq(_.sortBy(_.drop(e)));
+    })));
   }
   function getRedrawList() {
     return redrawList;
@@ -5207,6 +5220,7 @@ System.register("src/algorithm", ["npm:lodash@3.8.0"], function($__export) {
     }
   }
   $__export("init", init);
+  $__export("convertToPOJO", convertToPOJO);
   $__export("getRedrawList", getRedrawList);
   $__export("nextGeneration", nextGeneration);
   $__export("getNeighboursFromAlive", getNeighboursFromAlive);
@@ -5229,9 +5243,9 @@ System.register("src/algorithm", ["npm:lodash@3.8.0"], function($__export) {
   };
 });
 
-System.register("src/game", ["src/algorithm", "src/canvas"], function($__export) {
+System.register("src/stable/game", ["src/stable/algorithm", "src/stable/canvas"], function($__export) {
   "use strict";
-  var __moduleName = "src/game";
+  var __moduleName = "src/stable/game";
   var algorithm,
       canvas;
   function loadState() {
@@ -5297,9 +5311,9 @@ System.register("src/game", ["src/algorithm", "src/canvas"], function($__export)
   };
 });
 
-System.register("src/entry", ["src/game"], function($__export) {
+System.register("src/stable/entry", ["src/stable/game"], function($__export) {
   "use strict";
-  var __moduleName = "src/entry";
+  var __moduleName = "src/stable/entry";
   var game;
   return {
     setters: [function($__m) {

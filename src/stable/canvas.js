@@ -22,7 +22,6 @@ var colors = {
 };
 
 export
-
 function init() {
 
   canvas = document.getElementById('gameOfLife');
@@ -38,7 +37,6 @@ function init() {
 
 
 export
-
 function clearWorld() {
 
   var i, j;
@@ -58,8 +56,7 @@ function clearWorld() {
 };
 
 export
-
-function drawWorld(state) {
+function drawWorld() {
 
   var i, j;
 
@@ -80,7 +77,7 @@ function drawWorld(state) {
 
     for (j = 0; j < rows; j++) {
 
-      if (algorithm.isAlive(i, j, state)) {
+      if (algorithm.isAlive(i, j)) {
 
         drawCell(i, j, true);
 
@@ -96,7 +93,6 @@ function drawWorld(state) {
 };
 
 export
-
 function drawCell(i, j, alive) {
 
   if (alive) {
@@ -122,25 +118,23 @@ function drawCell(i, j, alive) {
 };
 
 export
-
 function switchCell(i, j) {
 
   if (algorithm.isAlive(i, j)) {
 
     changeCelltoDead(i, j);
-    algorithm.switchToDead(i, j);
+    algorithm.removeCell(i, j);
 
   } else {
 
     changeCelltoAlive(i, j);
-    algorithm.switchToAlive(i, j);
+    algorithm.addCell(i, j);
 
   }
 
 };
 
 export
-
 function keepCellAlive(i, j) {
 
   if (i >= 0 && i < columns && j >= 0 && j < rows) {
@@ -151,7 +145,6 @@ function keepCellAlive(i, j) {
 };
 
 export
-
 function changeCelltoAlive(i, j) {
 
   if (i >= 0 && i < columns && j >= 0 && j < rows) {
@@ -162,7 +155,6 @@ function changeCelltoAlive(i, j) {
 };
 
 export
-
 function changeCelltoDead(i, j) {
 
   if (i >= 0 && i < columns && j >= 0 && j < rows) {

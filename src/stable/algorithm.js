@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 
+var actualState = [];
 var redrawList = [];
 var topPointer = 1;
 var bottomPointer = 1;
@@ -9,7 +10,7 @@ var middlePointer = 1;
 
 export
 
-function init() {
+function init(state) {
 
   return new Array();
 
@@ -33,28 +34,6 @@ function convertToPOJO(state) {
 
 export
 
-function convertToArray(state) {
-
-  if (!_.isObject(state) || _.isEmpty(state)) {
-
-    return new Array();
-
-  }
-
-  return _.filter(_.map(state, (v, k) => {
-
-    let values = _.uniq(_.sortBy(v));
-
-    values.unshift(+k);
-
-    return values;
-
-  }), (e) => _.isArray(e) && e.length > 1);
-
-}
-
-export
-
 function getRedrawList() {
 
   return redrawList;
@@ -63,7 +42,7 @@ function getRedrawList() {
 
 export
 
-function nextGeneration(actualState) {
+function nextGeneration() {
 
   let x, y, i, j, m, n, key, t1, t2, alive = 0,
     neighbours, deadNeighbours, allDeadNeighbours = {},
@@ -94,7 +73,7 @@ function nextGeneration(actualState) {
       ];
 
       // Get number of live neighbours and remove alive neighbours from deadNeighbours
-      neighbours = getNeighboursFromAlive(x, y, i, deadNeighbours, actualState);
+      neighbours = getNeighboursFromAlive(x, y, i, deadNeighbours);
 
       // Join dead neighbours to check list
       for (m = 0; m < 8; m++) {
@@ -115,7 +94,7 @@ function nextGeneration(actualState) {
 
       if (!(neighbours === 0 || neighbours === 1 || neighbours > 3)) {
 
-        switchToAlive(x, y, newState);
+        addCell(x, y, newState);
         alive++;
         redrawList.push([x, y, 2]); // Keep alive
 
@@ -136,7 +115,7 @@ function nextGeneration(actualState) {
       t1 = parseInt(key[0], 10);
       t2 = parseInt(key[1], 10);
 
-      switchToAlive(t1, t2, newState);
+      addCell(t1, t2, newState);
       alive++;
       redrawList.push([t1, t2, 1]);
 
@@ -144,15 +123,14 @@ function nextGeneration(actualState) {
 
   }
 
+  actualState = newState;
 
-  //return alive;
-  return newState;
-
+  return alive;
 }
 
 export
 
-function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
+function getNeighboursFromAlive(x, y, i, possibleNeighboursList) {
 
   var neighbours = 0,
     k;
@@ -272,44 +250,157 @@ function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
 
 export
 
-function isAlive(x, y, state) {
+function isAlive(x, y) {
 
-  let statePOJO = convertToPOJO(state);
+  var i, j;
 
-  return _.isArray(statePOJO[y]) && _.find(statePOJO[y], x);
+  for (i = 0; i < actualState.length; i++) {
 
+    if (actualState[i][0] === y) {
+
+      for (j = 1; j < actualState[i].length; j++) {
+
+        if (actualState[i][j] === x) {
+          return true;
+        }
+
+      }
+
+    }
+
+  }
+
+  return false;
 }
 
 export
 
-function isDead(x, y, state) {
+function removeCell(x, y, state) {
 
-  return !isAlive(x, y, state);
+  var i, j;
 
+  state = state || actualState;
+
+  for (i = 0; i < state.length; i++) {
+
+    if (state[i][0] === y) {
+
+      if (state[i].length === 2) { // Remove all Row
+
+        state.splice(i, 1);
+
+      } else { // Remove Element
+
+        for (j = 1; j < state[i].length; j++) {
+
+          if (state[i][j] === x) {
+            state[i].splice(j, 1);
+          }
+
+        }
+
+      }
+
+    }
+
+  }
 }
 
 export
 
-function switchToDead(x, y, state) {
+function addCell(x, y, state) {
 
-  let statePOJO = convertToPOJO(state);
+  state = state || actualState;
 
-  if (!_.isArray(statePOJO[y]) || _.isEmpty(statePOJO[y])) return convertToArray(statePOJO);
+  if (state.length === 0) {
 
-  statePOJO[y].length === 1 ? statePOJO[y] = null : statePOJO[y].splice(_.find(statePOJO[y], x), 1);
+    state.push([y, x]);
+    return;
 
-  return convertToArray(statePOJO);
+  }
 
-}
+  let k, n, m, tempRow, newState = [],
+    added;
 
-export
+  if (y < state[0][0]) { // Add to Head
 
-function switchToAlive(x, y, state) {
+    newState = [
+      [y, x]
+    ];
 
-  let statePOJO = convertToPOJO(state);
+    for (k = 0; k < state.length; k++) {
+      newState[k + 1] = state[k];
+    }
 
-  _.isArray(statePOJO[y]) ? statePOJO[y].push(x) : statePOJO[y] = [x];
+    for (k = 0; k < newState.length; k++) {
+      state[k] = newState[k];
+    }
 
-  return convertToArray(statePOJO);
+    return;
 
+  } else if (y > state[state.length - 1][0]) { // Add to Tail
+
+    state[state.length] = [y, x];
+    return;
+
+  } else { // Add to Middle
+
+    for (n = 0; n < state.length; n++) {
+
+      if (state[n][0] === y) { // Level Exists
+
+        tempRow = [];
+        added = false;
+
+        for (m = 1; m < state[n].length; m++) {
+
+          if ((!added) && (x < state[n][m])) {
+            tempRow.push(x);
+            added = !added;
+          }
+
+          tempRow.push(state[n][m]);
+        }
+
+        tempRow.unshift(y);
+
+        if (!added) {
+
+          tempRow.push(x);
+
+        }
+
+        state[n] = tempRow;
+        return;
+
+      }
+
+      if (y < state[n][0]) { // Create Level
+
+        newState = [];
+
+        for (k = 0; k < state.length; k++) {
+
+          if (k === n) {
+            newState[k] = [y, x];
+            newState[k + 1] = state[k];
+          } else if (k < n) {
+            newState[k] = state[k];
+          } else if (k > n) {
+            newState[k + 1] = state[k];
+          }
+
+        }
+
+        for (k = 0; k < newState.length; k++) {
+          state[k] = newState[k];
+        }
+
+        return;
+
+      }
+
+    }
+
+  }
 }
