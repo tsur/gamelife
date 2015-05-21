@@ -55,6 +55,8 @@ function nextGeneration() {
     topPointer = 1;
     bottomPointer = 1;
 
+    console.log(actualState, actualState[i].length);
+
     for (j = 1; j < actualState[i].length; j++) {
 
       x = actualState[i][j];
@@ -310,7 +312,21 @@ export
 
 function addCell(x, y, state) {
 
+  // if (_.isArray(state)) return actualState = state;
+
+  // state = state || actualState;
+
+  // // console.log(x, y, state, actualState);
+
+  // let statePOJO = convertToPOJO(actualState);
+
+  // _.isArray(statePOJO[y]) ? statePOJO[y].push(x) : statePOJO[y] = [x];
+
+  // actualState = convertToArray(statePOJO);
+
   state = state || actualState;
+
+  console.log(x, y, state, actualState);
 
   if (state.length === 0) {
 
@@ -362,7 +378,11 @@ function addCell(x, y, state) {
           tempRow.push(state[n][m]);
         }
 
+        console.log(tempRow.toString());
+
         tempRow.unshift(y);
+
+        console.log(tempRow.toString());
 
         if (!added) {
 
@@ -370,7 +390,11 @@ function addCell(x, y, state) {
 
         }
 
+        console.log(tempRow.toString());
+
         state[n] = tempRow;
+
+        console.log(tempRow.toString(), state.toString());
         return;
 
       }
@@ -403,4 +427,43 @@ function addCell(x, y, state) {
     }
 
   }
+}
+
+
+export
+
+function convertToPOJO(state) {
+
+  if (!_.isArray(state) || _.isEmpty(state)) {
+
+    return new Object();
+
+  }
+
+  state = _.filter(state, (e) => _.isArray(e) && !_.isEmpty(e));
+
+  return _.zipObject(_.map(state, (e) => _.first(e)), _.map(state, (e) => _.uniq(_.sortBy(_.drop(e)))));
+
+}
+
+export
+
+function convertToArray(state) {
+
+  if (!_.isObject(state) || _.isEmpty(state)) {
+
+    return new Array();
+
+  }
+
+  return _.filter(_.map(state, (v, k) => {
+
+    let values = _.uniq(_.sortBy(v));
+
+    values.unshift(+k);
+
+    return values;
+
+  }), (e) => _.isArray(e) && e.length > 1);
+
 }

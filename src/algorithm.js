@@ -115,7 +115,7 @@ function nextGeneration(actualState) {
 
       if (!(neighbours === 0 || neighbours === 1 || neighbours > 3)) {
 
-        switchToAlive(x, y, newState);
+        newState = switchToAlive(x, y, newState);
         alive++;
         redrawList.push([x, y, 2]); // Keep alive
 
@@ -136,7 +136,7 @@ function nextGeneration(actualState) {
       t1 = parseInt(key[0], 10);
       t2 = parseInt(key[1], 10);
 
-      switchToAlive(t1, t2, newState);
+      newState = switchToAlive(t1, t2, newState);
       alive++;
       redrawList.push([t1, t2, 1]);
 

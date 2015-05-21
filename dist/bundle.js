@@ -358,7 +358,7 @@
   System.register(...);
 }); */
 
-(['src/stable/entry'], function(System) {
+(['src/entry'], function(System) {
 
 System.register("npm:process@0.10.1/browser", [], true, function(require, exports, module) {
   var global = System.global,
@@ -4823,9 +4823,9 @@ System.register("npm:lodash@3.8.0", ["npm:lodash@3.8.0/index"], true, function(r
   return module.exports;
 });
 
-System.register("src/stable/canvas", ["npm:lodash@3.8.0", "src/stable/algorithm"], function($__export) {
+System.register("src/canvas", ["npm:lodash@3.8.0", "src/algorithm"], function($__export) {
   "use strict";
-  var __moduleName = "src/stable/canvas";
+  var __moduleName = "src/canvas";
   var _,
       algorithm,
       context,
@@ -4858,7 +4858,7 @@ System.register("src/stable/canvas", ["npm:lodash@3.8.0", "src/stable/algorithm"
       }
     }
   }
-  function drawWorld() {
+  function drawWorld(state) {
     var i,
         j;
     width = height = 1;
@@ -4870,7 +4870,7 @@ System.register("src/stable/canvas", ["npm:lodash@3.8.0", "src/stable/algorithm"
     context.fillRect(0, 0, width, height);
     for (i = 0; i < columns; i++) {
       for (j = 0; j < rows; j++) {
-        if (algorithm.isAlive(i, j)) {
+        if (algorithm.isAlive(i, j, state)) {
           drawCell(i, j, true);
         } else {
           drawCell(i, j, false);
@@ -4894,10 +4894,10 @@ System.register("src/stable/canvas", ["npm:lodash@3.8.0", "src/stable/algorithm"
   function switchCell(i, j) {
     if (algorithm.isAlive(i, j)) {
       changeCelltoDead(i, j);
-      algorithm.removeCell(i, j);
+      algorithm.switchToDead(i, j);
     } else {
       changeCelltoAlive(i, j);
-      algorithm.addCell(i, j);
+      algorithm.switchToAlive(i, j);
     }
   }
   function keepCellAlive(i, j) {
@@ -4960,16 +4960,15 @@ System.register("src/stable/canvas", ["npm:lodash@3.8.0", "src/stable/algorithm"
   };
 });
 
-System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export) {
+System.register("src/algorithm", ["npm:lodash@3.8.0"], function($__export) {
   "use strict";
-  var __moduleName = "src/stable/algorithm";
+  var __moduleName = "src/algorithm";
   var _,
-      actualState,
       redrawList,
       topPointer,
       bottomPointer,
       middlePointer;
-  function init(state) {
+  function init() {
     return new Array();
   }
   function convertToPOJO(state) {
@@ -4985,10 +4984,22 @@ System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export
       return _.uniq(_.sortBy(_.drop(e)));
     })));
   }
+  function convertToArray(state) {
+    if (!_.isObject(state) || _.isEmpty(state)) {
+      return new Array();
+    }
+    return _.filter(_.map(state, (function(v, k) {
+      var values = _.uniq(_.sortBy(v));
+      values.unshift(+k);
+      return values;
+    })), (function(e) {
+      return _.isArray(e) && e.length > 1;
+    }));
+  }
   function getRedrawList() {
     return redrawList;
   }
-  function nextGeneration() {
+  function nextGeneration(actualState) {
     var x,
         y,
         i,
@@ -5011,7 +5022,7 @@ System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export
         x = actualState[i][j];
         y = actualState[i][0];
         deadNeighbours = [[x - 1, y - 1, 1], [x, y - 1, 1], [x + 1, y - 1, 1], [x - 1, y, 1], [x + 1, y, 1], [x - 1, y + 1, 1], [x, y + 1, 1], [x + 1, y + 1, 1]];
-        neighbours = getNeighboursFromAlive(x, y, i, deadNeighbours);
+        neighbours = getNeighboursFromAlive(x, y, i, deadNeighbours, actualState);
         for (m = 0; m < 8; m++) {
           if (deadNeighbours[m] !== undefined) {
             key = deadNeighbours[m][0] + ',' + deadNeighbours[m][1];
@@ -5023,7 +5034,7 @@ System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export
           }
         }
         if (!(neighbours === 0 || neighbours === 1 || neighbours > 3)) {
-          addCell(x, y, newState);
+          newState = switchToAlive(x, y, newState);
           alive++;
           redrawList.push([x, y, 2]);
         } else {
@@ -5036,15 +5047,14 @@ System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export
         key = key.split(',');
         t1 = parseInt(key[0], 10);
         t2 = parseInt(key[1], 10);
-        addCell(t1, t2, newState);
+        newState = switchToAlive(t1, t2, newState);
         alive++;
         redrawList.push([t1, t2, 1]);
       }
     }
-    actualState = newState;
-    return alive;
+    return newState;
   }
-  function getNeighboursFromAlive(x, y, i, possibleNeighboursList) {
+  function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
     var neighbours = 0,
         k;
     if (actualState[i - 1] !== undefined) {
@@ -5124,116 +5134,41 @@ System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export
     }
     return neighbours;
   }
-  function isAlive(x, y) {
-    var i,
-        j;
-    for (i = 0; i < actualState.length; i++) {
-      if (actualState[i][0] === y) {
-        for (j = 1; j < actualState[i].length; j++) {
-          if (actualState[i][j] === x) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
+  function isAlive(x, y, state) {
+    var statePOJO = convertToPOJO(state);
+    return _.isArray(statePOJO[y]) && _.find(statePOJO[y], x);
   }
-  function removeCell(x, y, state) {
-    var i,
-        j;
-    state = state || actualState;
-    for (i = 0; i < state.length; i++) {
-      if (state[i][0] === y) {
-        if (state[i].length === 2) {
-          state.splice(i, 1);
-        } else {
-          for (j = 1; j < state[i].length; j++) {
-            if (state[i][j] === x) {
-              state[i].splice(j, 1);
-            }
-          }
-        }
-      }
-    }
+  function isDead(x, y, state) {
+    return !isAlive(x, y, state);
   }
-  function addCell(x, y, state) {
-    state = state || actualState;
-    if (state.length === 0) {
-      state.push([y, x]);
-      return ;
-    }
-    var k,
-        n,
-        m,
-        tempRow,
-        newState = [],
-        added;
-    if (y < state[0][0]) {
-      newState = [[y, x]];
-      for (k = 0; k < state.length; k++) {
-        newState[k + 1] = state[k];
-      }
-      for (k = 0; k < newState.length; k++) {
-        state[k] = newState[k];
-      }
-      return ;
-    } else if (y > state[state.length - 1][0]) {
-      state[state.length] = [y, x];
-      return ;
-    } else {
-      for (n = 0; n < state.length; n++) {
-        if (state[n][0] === y) {
-          tempRow = [];
-          added = false;
-          for (m = 1; m < state[n].length; m++) {
-            if ((!added) && (x < state[n][m])) {
-              tempRow.push(x);
-              added = !added;
-            }
-            tempRow.push(state[n][m]);
-          }
-          tempRow.unshift(y);
-          if (!added) {
-            tempRow.push(x);
-          }
-          state[n] = tempRow;
-          return ;
-        }
-        if (y < state[n][0]) {
-          newState = [];
-          for (k = 0; k < state.length; k++) {
-            if (k === n) {
-              newState[k] = [y, x];
-              newState[k + 1] = state[k];
-            } else if (k < n) {
-              newState[k] = state[k];
-            } else if (k > n) {
-              newState[k + 1] = state[k];
-            }
-          }
-          for (k = 0; k < newState.length; k++) {
-            state[k] = newState[k];
-          }
-          return ;
-        }
-      }
-    }
+  function switchToDead(x, y, state) {
+    var statePOJO = convertToPOJO(state);
+    if (!_.isArray(statePOJO[y]) || _.isEmpty(statePOJO[y]))
+      return convertToArray(statePOJO);
+    statePOJO[y].length === 1 ? statePOJO[y] = null : statePOJO[y].splice(_.find(statePOJO[y], x), 1);
+    return convertToArray(statePOJO);
+  }
+  function switchToAlive(x, y, state) {
+    var statePOJO = convertToPOJO(state);
+    _.isArray(statePOJO[y]) ? statePOJO[y].push(x) : statePOJO[y] = [x];
+    return convertToArray(statePOJO);
   }
   $__export("init", init);
   $__export("convertToPOJO", convertToPOJO);
+  $__export("convertToArray", convertToArray);
   $__export("getRedrawList", getRedrawList);
   $__export("nextGeneration", nextGeneration);
   $__export("getNeighboursFromAlive", getNeighboursFromAlive);
   $__export("isAlive", isAlive);
-  $__export("removeCell", removeCell);
-  $__export("addCell", addCell);
+  $__export("isDead", isDead);
+  $__export("switchToDead", switchToDead);
+  $__export("switchToAlive", switchToAlive);
   return {
     setters: [function($__m) {
       _ = $__m.default;
     }],
     execute: function() {
       'use strict';
-      actualState = [];
       redrawList = [];
       topPointer = 1;
       bottomPointer = 1;
@@ -5243,35 +5178,27 @@ System.register("src/stable/algorithm", ["npm:lodash@3.8.0"], function($__export
   };
 });
 
-System.register("src/stable/game", ["src/stable/algorithm", "src/stable/canvas"], function($__export) {
+System.register("src/game", ["src/algorithm", "src/canvas"], function($__export) {
   "use strict";
-  var __moduleName = "src/stable/game";
+  var __moduleName = "src/game";
   var algorithm,
       canvas;
   function loadState() {
-    var state,
-        i,
-        j,
-        y;
-    state = JSON.parse('[{"39":[110]},{"40":[112]},{"41":[109,110,113,114,115]}]');
-    for (i = 0; i < state.length; i++) {
-      for (y in state[i]) {
-        for (j = 0; j < state[i][y].length; j++) {
-          algorithm.addCell(state[i][y][j], parseInt(y, 10));
-        }
-      }
-    }
+    return algorithm.convertToArray({
+      "39": [110],
+      "40": [112],
+      "41": [109, 110, 113, 114, 115]
+    });
   }
-  function nextStep() {
+  function nextStep(state) {
     var i,
         x,
         y,
         r,
-        liveCellNumber,
         algorithmTime,
         redrawList;
     algorithmTime = (new Date());
-    liveCellNumber = algorithm.nextGeneration();
+    var newState = algorithm.nextGeneration(state);
     algorithmTime = (new Date()) - algorithmTime;
     redrawList = algorithm.getRedrawList();
     for (i = 0; i < redrawList.length; i++) {
@@ -5286,16 +5213,15 @@ System.register("src/stable/game", ["src/stable/algorithm", "src/stable/canvas"]
       }
     }
     setTimeout(function() {
-      nextStep();
+      nextStep(newState);
     }, 300);
   }
   function start(cb) {
-    algorithm.init();
-    loadState();
+    var state = loadState();
     canvas.init();
     canvas.clearWorld();
-    canvas.drawWorld();
-    nextStep();
+    canvas.drawWorld(state);
+    nextStep(state);
     cb();
   }
   $__export("default", start);
@@ -5311,9 +5237,9 @@ System.register("src/stable/game", ["src/stable/algorithm", "src/stable/canvas"]
   };
 });
 
-System.register("src/stable/entry", ["src/stable/game"], function($__export) {
+System.register("src/entry", ["src/game"], function($__export) {
   "use strict";
-  var __moduleName = "src/stable/entry";
+  var __moduleName = "src/entry";
   var game;
   return {
     setters: [function($__m) {

@@ -6,8 +6,8 @@
   "scripts": {
     "start": "jspm install && npm run server",
     "build-js": "jspm bundle-sfx src/entry dist/bundle.js && jspm bundle-sfx src/entry dist/bundle.min.js --minify",
-    "build-js:stable": "jspm bundle-sfx src/stable/entry dist/bundle.js && jspm bundle-sfx src/stable/entry dist/bundle.min.js --minify",
-    "watch-js": "watch 'npm run build-js' src",
+    "build-js:stable": "jspm bundle-sfx src/stable/entry dist/bundle.js",
+    "watch-js": "watch 'npm run build-js:stable' src",
     "test": "testem",
     "server": "http-server"
   },
