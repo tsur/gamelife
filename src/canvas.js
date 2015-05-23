@@ -3,17 +3,9 @@
 import _ from 'lodash';
 import * as algorithm from './algorithm';
 
-var context = null;
-var width = null;
-var height = null;
-var age = null;
-var cellSize = null;
-var cellSpace = null;
-var canvas = null;
-var rows = null;
-var columns = null;
+function Canvas() {};
 
-var colors = {
+Canvas.colors = {
 
   dead: '#FFFFFF',
   trail: ['#B5ECA2'],
@@ -21,152 +13,149 @@ var colors = {
 
 };
 
-export
+Canvas.prototype.init = function init() {
 
-function init() {
+  this.canvas = document.getElementById('gameOfLife');
+  this.context = this.canvas.getContext('2d');
 
-  canvas = document.getElementById('gameOfLife');
-  context = canvas.getContext('2d');
+  this.cellSize = 4;
+  this.cellSpace = 1;
+  this.rows = 86;
+  this.columns = 180;
 
-  cellSize = 4;
-  cellSpace = 1;
-  rows = 86;
-  columns = 180;
+  this.clearWorld();
 
-  clearWorld();
+  return this;
+
 };
 
-
-export
-
-function clearWorld() {
-
-  var i, j;
+Canvas.prototype.clearWorld = function clearWorld() {
 
   // Init ages (Canvas reference)
-  age = [];
+  this.age = [];
 
-  for (i = 0; i < columns; i++) {
+  _.forEach(_.range(this.columns), (i) => {
 
-    age[i] = [];
+    this.age[i] = [];
 
-    for (j = 0; j < rows; j++) {
-      age[i][j] = 0; // Dead
-    }
-  }
+    _.forEach(_.range(this.rows), (j) => {
+
+
+      this.age[i][j] = 0; // Dead
+
+    });
+
+  });
 
 };
 
-export
-
-function drawWorld(state) {
-
-  var i, j;
-
-  width = height = 1;
+Canvas.prototype.drawWorld = function drawWorld(state) {
 
   // Dynamic canvas size
-  width = width + (cellSpace * columns) + (cellSize * columns);
-  canvas.setAttribute('width', width);
+  this.width = 1 + (this.cellSpace * this.columns) + (this.cellSize * this.columns);
+  this.canvas.setAttribute('width', this.width);
 
-  height = height + (cellSpace * rows) + (cellSize * rows);
-  canvas.getAttribute('height', height);
+  this.height = 1 + (this.cellSpace * this.rows) + (this.cellSize * this.rows);
+  this.canvas.getAttribute('height', this.height);
 
   // Fill background
-  context.fillStyle = '#F3F3F3';
-  context.fillRect(0, 0, width, height);
+  this.context.fillStyle = '#F3F3F3';
+  this.context.fillRect(0, 0, this.width, this.height);
 
-  for (i = 0; i < columns; i++) {
 
-    for (j = 0; j < rows; j++) {
+  _.forEach(_.range(this.columns), (i) => {
+
+    _.forEach(_.range(this.rows), (j) => {
 
       if (algorithm.isAlive(i, j, state)) {
 
-        drawCell(i, j, true);
+        this.drawCell(i, j, true);
 
       } else {
 
-        drawCell(i, j, false);
+        this.drawCell(i, j, false);
 
       }
 
-    }
+    });
 
-  }
+  });
+
 };
 
-export
-
-function drawCell(i, j, alive) {
+Canvas.prototype.drawCell = function drawCell(i, j, alive) {
 
   if (alive) {
 
-    if (age[i][j] > -1) context.fillStyle = colors.alive[age[i][j] % colors.alive.length];
+    if (this.age[i][j] > -1) this.context.fillStyle = Canvas.colors.alive[this.age[i][j] % Canvas.colors.alive.length];
 
   } else {
 
-    if (age[i][j] < 0) {
+    if (this.age[i][j] < 0) {
 
-      context.fillStyle = colors.trail[(age[i][j] * -1) % colors.trail.length];
+      this.context.fillStyle = Canvas.colors.trail[(this.age[i][j] * -1) % Canvas.colors.trail.length];
 
     } else {
 
-      context.fillStyle = colors.dead;
+      this.context.fillStyle = Canvas.colors.dead;
 
     }
 
   }
 
-  context.fillRect(cellSpace + (cellSpace * i) + (cellSize * i), cellSpace + (cellSpace * j) + (cellSize * j), cellSize, cellSize);
+  this.context.fillRect(this.cellSpace + (this.cellSpace * i) + (this.cellSize * i), this.cellSpace + (this.cellSpace * j) + (this.cellSize * j), this.cellSize, this.cellSize);
 
 };
 
-export
-
-function switchCell(i, j) {
+Canvas.prototype.switchCell = function switchCell(i, j) {
 
   if (algorithm.isAlive(i, j)) {
 
-    changeCelltoDead(i, j);
+    this.changeCelltoDead(i, j);
     algorithm.switchToDead(i, j);
 
   } else {
 
-    changeCelltoAlive(i, j);
+    this.changeCelltoAlive(i, j);
     algorithm.switchToAlive(i, j);
 
   }
 
 };
 
-export
+Canvas.prototype.keepCellAlive = function keepCellAlive(i, j) {
 
-function keepCellAlive(i, j) {
+  if (i >= 0 && i < this.columns && j >= 0 && j < this.rows) {
 
-  if (i >= 0 && i < columns && j >= 0 && j < rows) {
-    age[i][j]++;
-    drawCell(i, j, true);
+    this.age[i][j]++;
+    this.drawCell(i, j, true);
+
   }
 
 };
 
-export
+Canvas.prototype.changeCelltoAlive = function changeCelltoAlive(i, j) {
 
-function changeCelltoAlive(i, j) {
+  if (i >= 0 && i < this.columns && j >= 0 && j < this.rows) {
 
-  if (i >= 0 && i < columns && j >= 0 && j < rows) {
-    age[i][j] = 1;
-    drawCell(i, j, true);
+    this.age[i][j] = 1;
+    this.drawCell(i, j, true);
+
   }
 
 };
 
-export
+Canvas.prototype.changeCelltoDead = function changeCelltoDead(i, j) {
 
-function changeCelltoDead(i, j) {
+  if (i >= 0 && i < this.columns && j >= 0 && j < this.rows) {
 
-  if (i >= 0 && i < columns && j >= 0 && j < rows) {
-    age[i][j] = -age[i][j]; // Keep trail
-    drawCell(i, j, false);
+    this.age[i][j] = -this.age[i][j]; // Keep trail
+    this.drawCell(i, j, false);
+
   }
+
 };
+
+// Singleton OOP
+export
+default new Canvas();

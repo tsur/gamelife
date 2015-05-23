@@ -1,17 +1,24 @@
 'use strict';
 
 import _ from 'lodash';
+import * as util from './util';
 
-var redrawList = [];
-var topPointer = 1;
-var bottomPointer = 1;
-var middlePointer = 1;
+const ADD_NEW_CELL = 3;
 
 export
 
-function init() {
+function init(state) {
 
-  return new Array();
+  if (_.isObject(state)) return convertToArray(state);
+
+  if (_.isArray(state)) return state;
+
+  // Default initial state
+  return [
+    [39, 110],
+    [40, 112],
+    [41, 109, 110, 113, 114, 115]
+  ];
 
 }
 
@@ -55,130 +62,117 @@ function convertToArray(state) {
 
 export
 
-function getRedrawList() {
+function nextGeneration(state) {
 
-  return redrawList;
+  let allDeadNeighbours = {};
+  let newState = [];
+  let redrawList = [];
 
-};
+  _.forEach(state, (lines, i) => {
 
-export
+    const row = _.first(lines);
 
-function nextGeneration(actualState) {
+    let topPointer = 1;
+    let bottomPointer = 1;
 
-  let x, y, i, j, m, n, key, t1, t2, alive = 0,
-    neighbours, deadNeighbours, allDeadNeighbours = {},
-    newState = [];
-
-  redrawList = [];
-
-  for (i = 0; i < actualState.length; i++) {
-
-    topPointer = 1;
-    bottomPointer = 1;
-
-    for (j = 1; j < actualState[i].length; j++) {
-
-      x = actualState[i][j];
-      y = actualState[i][0];
+    _.forEach(lines, (col) => {
 
       // Possible dead neighbours
-      deadNeighbours = [
-        [x - 1, y - 1, 1],
-        [x, y - 1, 1],
-        [x + 1, y - 1, 1],
-        [x - 1, y, 1],
-        [x + 1, y, 1],
-        [x - 1, y + 1, 1],
-        [x, y + 1, 1],
-        [x + 1, y + 1, 1]
+      const deadNeighbours = [
+        [col - 1, row - 1, 1],
+        [col, row - 1, 1],
+        [col + 1, row - 1, 1],
+        [col - 1, row, 1],
+        [col + 1, row, 1],
+        [col - 1, row + 1, 1],
+        [col, row + 1, 1],
+        [col + 1, row + 1, 1]
       ];
 
       // Get number of live neighbours and remove alive neighbours from deadNeighbours
-      neighbours = getNeighboursFromAlive(x, y, i, deadNeighbours, actualState);
+      const neighbours = getNeighboursFromAlive(col, row, i, deadNeighbours, state, topPointer, bottomPointer);
 
       // Join dead neighbours to check list
-      for (m = 0; m < 8; m++) {
+      _.forEach(_.range(8), (m) => {
 
         if (deadNeighbours[m] !== undefined) {
 
-          key = deadNeighbours[m][0] + ',' + deadNeighbours[m][1]; // Create hashtable key
+          const key = deadNeighbours[m][0] + ',' + deadNeighbours[m][1]; // Create hashtable key
 
-          if (allDeadNeighbours[key] === undefined) {
-            allDeadNeighbours[key] = 1;
-          } else {
-            allDeadNeighbours[key]++;
-          }
+          allDeadNeighbours[key] === undefined ? allDeadNeighbours[key] = 1 : allDeadNeighbours[key]++;
 
         }
 
-      }
+      });
 
       if (!(neighbours === 0 || neighbours === 1 || neighbours > 3)) {
 
-        newState = switchToAlive(x, y, newState);
-        alive++;
-        redrawList.push([x, y, 2]); // Keep alive
+        newState = switchToAlive(col, row, newState);
+        redrawList.push([col, row, 2]); // Keep alive
 
       } else {
 
-        redrawList.push([x, y, 0]); // Kill cell
+        redrawList.push([col, row, 0]); // Kill cell
       }
 
-    }
-  }
+    });
+
+  });
 
   // Process dead neighbours
-  for (key in allDeadNeighbours) {
+  for (let [position, action] of util.dictEntriesGen(allDeadNeighbours)) {
 
-    if (allDeadNeighbours[key] === 3) { // Add new Cell
+    if (action === ADD_NEW_CELL) { // Add new Cell
 
-      key = key.split(',');
-      t1 = parseInt(key[0], 10);
-      t2 = parseInt(key[1], 10);
+      position = position.split(',');
 
-      newState = switchToAlive(t1, t2, newState);
-      alive++;
-      redrawList.push([t1, t2, 1]);
+      const x = parseInt(_.first(position), 10);
+      const y = parseInt(_.last(position), 10);
+
+      newState = switchToAlive(x, y, newState);
+      redrawList.push([x, y, 1]);
 
     }
 
   }
 
-
   //return alive;
-  return newState;
+  return {
+    'state': newState,
+    'changes': redrawList
+  };
 
 }
 
 export
 
-function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
+function getNeighboursFromAlive(x, y, i, possibleNeighboursList, state, topPointer, bottomPointer) {
 
-  var neighbours = 0,
-    k;
+  let neighbours = 0;
+  let k;
 
   // Top
-  if (actualState[i - 1] !== undefined) {
+  if (state[i - 1] !== undefined) {
 
-    if (actualState[i - 1][0] === (y - 1)) {
+    if (state[i - 1][0] === (y - 1)) {
 
-      for (k = topPointer; k < actualState[i - 1].length; k++) {
+      for (k = topPointer; k < state[i - 1].length; k++) {
 
-        if (actualState[i - 1][k] >= (x - 1)) {
+        if (state[i - 1][k] >= (x - 1)) {
 
-          if (actualState[i - 1][k] === (x - 1)) {
+          if (state[i - 1][k] === (x - 1)) {
             possibleNeighboursList[0] = undefined;
             topPointer = k + 1;
             neighbours++;
           }
 
-          if (actualState[i - 1][k] === x) {
+          if (state[i - 1][k] === x) {
             possibleNeighboursList[1] = undefined;
             topPointer = k;
             neighbours++;
           }
 
-          if (actualState[i - 1][k] === (x + 1)) {
+          if (state[i - 1][k] === (x + 1)) {
             possibleNeighboursList[2] = undefined;
 
             if (k == 1) {
@@ -190,7 +184,7 @@ function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
             neighbours++;
           }
 
-          if (actualState[i - 1][k] > (x + 1)) {
+          if (state[i - 1][k] > (x + 1)) {
             break;
           }
         }
@@ -198,23 +192,22 @@ function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
       }
     }
   }
-
   // Middle
-  for (k = 1; k < actualState[i].length; k++) {
+  for (k = 1; k < state[i].length; k++) {
 
-    if (actualState[i][k] >= (x - 1)) {
+    if (state[i][k] >= (x - 1)) {
 
-      if (actualState[i][k] === (x - 1)) {
+      if (state[i][k] === (x - 1)) {
         possibleNeighboursList[3] = undefined;
         neighbours++;
       }
 
-      if (actualState[i][k] === (x + 1)) {
+      if (state[i][k] === (x + 1)) {
         possibleNeighboursList[4] = undefined;
         neighbours++;
       }
 
-      if (actualState[i][k] > (x + 1)) {
+      if (state[i][k] > (x + 1)) {
         break;
       }
     }
@@ -222,27 +215,27 @@ function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
   }
 
   // Bottom
-  if (actualState[i + 1] !== undefined) {
+  if (state[i + 1] !== undefined) {
 
-    if (actualState[i + 1][0] === (y + 1)) {
+    if (state[i + 1][0] === (y + 1)) {
 
-      for (k = bottomPointer; k < actualState[i + 1].length; k++) {
+      for (k = bottomPointer; k < state[i + 1].length; k++) {
 
-        if (actualState[i + 1][k] >= (x - 1)) {
+        if (state[i + 1][k] >= (x - 1)) {
 
-          if (actualState[i + 1][k] === (x - 1)) {
+          if (state[i + 1][k] === (x - 1)) {
             possibleNeighboursList[5] = undefined;
             bottomPointer = k + 1;
             neighbours++;
           }
 
-          if (actualState[i + 1][k] === x) {
+          if (state[i + 1][k] === x) {
             possibleNeighboursList[6] = undefined;
             bottomPointer = k;
             neighbours++;
           }
 
-          if (actualState[i + 1][k] === (x + 1)) {
+          if (state[i + 1][k] === (x + 1)) {
             possibleNeighboursList[7] = undefined;
 
             if (k == 1) {
@@ -254,7 +247,7 @@ function getNeighboursFromAlive(x, y, i, possibleNeighboursList, actualState) {
             neighbours++;
           }
 
-          if (actualState[i + 1][k] > (x + 1)) {
+          if (state[i + 1][k] > (x + 1)) {
             break;
           }
 
