@@ -7,9 +7,9 @@ function Canvas() {};
 
 Canvas.colors = {
 
-  dead: '#FFFFFF',
-  trail: ['#B5ECA2'],
-  alive: ['#9898FF', '#8585FF', '#7272FF', '#5F5FFF', '#4C4CFF', '#3939FF', '#2626FF', '#1313FF', '#0000FF', '#1313FF', '#2626FF', '#3939FF', '#4C4CFF', '#5F5FFF', '#7272FF', '#8585FF']
+  dead: '#242424',
+  trail: ['#2E2E2E'],
+  alive: ['#FF39E1', '#E131C7']
 
 };
 
@@ -19,7 +19,7 @@ Canvas.prototype.init = function init() {
   this.context = this.canvas.getContext('2d');
 
   this.cellSize = 8; //4
-  this.cellSpace = 2; //1
+  this.cellSpace = 1; //1
   this.rows = window.innerHeight / (this.cellSize + this.cellSpace); //86
   this.columns = window.innerWidth / (this.cellSize + this.cellSpace); //180
 
@@ -61,7 +61,7 @@ Canvas.prototype.drawWorld = function drawWorld(state) {
   this.canvas.setAttribute('height', this.height);
 
   // Fill background
-  this.context.fillStyle = '#F3F3F3';
+  this.context.fillStyle = '#242424';
   this.context.fillRect(0, 0, this.width, this.height);
 
   _.forEach(_.range(this.columns), (i) => {
@@ -104,7 +104,9 @@ Canvas.prototype.drawCell = function drawCell(i, j, alive) {
 
   }
 
+  // this.context.beginPath();
   this.context.fillRect(this.cellSpace + (this.cellSpace * i) + (this.cellSize * i), this.cellSpace + (this.cellSpace * j) + (this.cellSize * j), this.cellSize, this.cellSize);
+  // this.context.stroke();
 
 };
 
