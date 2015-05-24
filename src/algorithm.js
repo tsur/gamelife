@@ -149,111 +149,96 @@ export
 function getNeighboursFromAlive(x, y, i, possibleNeighboursList, state, topPointer, bottomPointer) {
 
   let neighbours = 0;
-  let k;
+
+  const update = (s, k, type) => {
+
+    if (type == 'middle') {
+
+      if (s >= (x - 1)) {
+
+        if (s === (x - 1)) {
+
+          possibleNeighboursList[3] = undefined;
+          neighbours++;
+
+        }
+
+        if (s === (x + 1)) {
+
+          possibleNeighboursList[4] = undefined;
+          neighbours++;
+
+        }
+
+        if (s > (x + 1)) return;
+
+      }
+
+      return;
+
+    }
+
+    if (s >= (x - 1)) {
+
+      if (s === (x - 1)) {
+
+        possibleNeighboursList[type == 'top' ? 0 : 5] = undefined;
+        type == 'top' ? topPointer += (k + 1) : bottomPointer += (k + 1);
+        neighbours++;
+
+      }
+
+      if (s === x) {
+
+        possibleNeighboursList[type == 'top' ? 1 : 6] = undefined;
+        type == 'top' ? topPointer += k : bottomPointer += k;
+        neighbours++;
+
+      }
+
+      if (s === (x + 1)) {
+
+        possibleNeighboursList[type == 'top' ? 2 : 7] = undefined;
+
+        if (k == 1) {
+
+          type == 'top' ? topPointer = 1 : bottomPointer = 1;
+
+        } else {
+
+          type == 'top' ? topPointer += (k - 1) : bottomPointer += (k - 1);
+
+        }
+
+        neighbours++;
+
+      }
+
+      if (s > (x + 1)) return;
+
+    }
+
+  };
 
   // Top
   if (state[i - 1] !== undefined) {
 
     if (state[i - 1][0] === (y - 1)) {
 
-      for (k = topPointer; k < state[i - 1].length; k++) {
+      _.forEach(_.drop(state[i - 1], topPointer), (s, k) => update(s, k, 'top'));
 
-        if (state[i - 1][k] >= (x - 1)) {
-
-          if (state[i - 1][k] === (x - 1)) {
-            possibleNeighboursList[0] = undefined;
-            topPointer = k + 1;
-            neighbours++;
-          }
-
-          if (state[i - 1][k] === x) {
-            possibleNeighboursList[1] = undefined;
-            topPointer = k;
-            neighbours++;
-          }
-
-          if (state[i - 1][k] === (x + 1)) {
-            possibleNeighboursList[2] = undefined;
-
-            if (k == 1) {
-              topPointer = 1;
-            } else {
-              topPointer = k - 1;
-            }
-
-            neighbours++;
-          }
-
-          if (state[i - 1][k] > (x + 1)) {
-            break;
-          }
-        }
-
-      }
     }
   }
+
   // Middle
-  for (k = 1; k < state[i].length; k++) {
-
-    if (state[i][k] >= (x - 1)) {
-
-      if (state[i][k] === (x - 1)) {
-        possibleNeighboursList[3] = undefined;
-        neighbours++;
-      }
-
-      if (state[i][k] === (x + 1)) {
-        possibleNeighboursList[4] = undefined;
-        neighbours++;
-      }
-
-      if (state[i][k] > (x + 1)) {
-        break;
-      }
-    }
-
-  }
+  _.forEach(_.rest(state[i]), (s, k) => update(s, k, 'middle'));
 
   // Bottom
   if (state[i + 1] !== undefined) {
 
     if (state[i + 1][0] === (y + 1)) {
 
-      for (k = bottomPointer; k < state[i + 1].length; k++) {
-
-        if (state[i + 1][k] >= (x - 1)) {
-
-          if (state[i + 1][k] === (x - 1)) {
-            possibleNeighboursList[5] = undefined;
-            bottomPointer = k + 1;
-            neighbours++;
-          }
-
-          if (state[i + 1][k] === x) {
-            possibleNeighboursList[6] = undefined;
-            bottomPointer = k;
-            neighbours++;
-          }
-
-          if (state[i + 1][k] === (x + 1)) {
-            possibleNeighboursList[7] = undefined;
-
-            if (k == 1) {
-              bottomPointer = 1;
-            } else {
-              bottomPointer = k - 1;
-            }
-
-            neighbours++;
-          }
-
-          if (state[i + 1][k] > (x + 1)) {
-            break;
-          }
-
-        }
-
-      }
+      _.forEach(_.drop(state[i + 1], bottomPointer), (s, k) => update(s, k, 'bottom'));
 
     }
 

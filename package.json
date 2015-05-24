@@ -8,7 +8,7 @@
     "build-js": "jspm bundle-sfx src/entry dist/bundle.js && jspm bundle-sfx src/entry dist/bundle.min.js --minify",
     "watch-js": "watch 'npm run build-js:stable' src",
     "test": "testem",
-    "serve": "http-server"
+    "serve": "http-server & livereload"
   },
   "repository": "",
   "author": "Zuri Pabon",

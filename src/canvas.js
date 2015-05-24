@@ -18,10 +18,10 @@ Canvas.prototype.init = function init() {
   this.canvas = document.getElementById('gameOfLife');
   this.context = this.canvas.getContext('2d');
 
-  this.cellSize = 4;
-  this.cellSpace = 1;
-  this.rows = 86;
-  this.columns = 180;
+  this.cellSize = 8; //4
+  this.cellSpace = 2; //1
+  this.rows = window.innerHeight / (this.cellSize + this.cellSpace); //86
+  this.columns = window.innerWidth / (this.cellSize + this.cellSpace); //180
 
   this.clearWorld();
 
@@ -52,16 +52,17 @@ Canvas.prototype.clearWorld = function clearWorld() {
 Canvas.prototype.drawWorld = function drawWorld(state) {
 
   // Dynamic canvas size
-  this.width = 1 + (this.cellSpace * this.columns) + (this.cellSize * this.columns);
+  // this.width = 1 + (this.cellSpace * this.columns) + (this.cellSize * this.columns);
+  this.width = window.innerWidth;
   this.canvas.setAttribute('width', this.width);
 
-  this.height = 1 + (this.cellSpace * this.rows) + (this.cellSize * this.rows);
-  this.canvas.getAttribute('height', this.height);
+  // this.height = 1 + (this.cellSpace * this.rows) + (this.cellSize * this.rows);
+  this.height = window.innerHeight;
+  this.canvas.setAttribute('height', this.height);
 
   // Fill background
   this.context.fillStyle = '#F3F3F3';
   this.context.fillRect(0, 0, this.width, this.height);
-
 
   _.forEach(_.range(this.columns), (i) => {
 
