@@ -5,18 +5,27 @@
   "main": "src/entry.js",
   "scripts": {
     "setup": "npm install && jspm install",
-    "build-js": "jspm bundle-sfx src/entry dist/bundle.js && jspm bundle-sfx src/entry dist/bundle.min.js --minify",
-    "watch-js": "watch 'npm run build-js:stable' src",
-    "test": "testem",
-    "serve": "http-server & livereload"
+    "serve": "http-server & livereload",
+    "deploy": "npm run setup && npm build && npm serve",
+    "build": "npm run build:js && npm run build:html && npm run build:css",
+    "build:js": "jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.js && jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.min.js --minify",
+    "build:css": "cssnext public/style.css > dist/style.css",
+    "build:html": "node preprocess.js",
+    "test": "testem"
+  },
+  "config": {
+    "entry": "public/src/entry",
+    "bundle": "dist/bundle"
   },
   "repository": "",
   "author": "Zuri Pabon",
   "license": "",
   "dependencies": {},
   "devDependencies": {
+    "cssnext": "^1.5.1",
     "http-server": "^0.8.0",
     "jspm": "^0.15.6",
+    "preprocess": "^2.1.1",
     "testem": "^0.8.3",
     "watch": "^0.16.0"
   },

@@ -1,0 +1,76 @@
+    
+      *, html, body{
+      
+        margin:0;
+        padding:0;
+        overflow:hidden;
+
+      }
+
+      canvas {
+          
+          border: 0;
+          padding: 0;
+          margin: 0;
+
+      }
+
+      section {
+
+        position:absolute;
+        top:0;
+        left:30px;
+        width: 240px;
+        height: 100%;
+        background-color: rgba(100, 100, 100, 0.3);
+        padding:20px;
+        padding-top: 0;
+
+      }
+
+      section p, section figure {
+
+        color: #f3f3f3;
+        padding:5px;
+        font-size: 13px;
+        font-family: monospace;
+        text-align: justify;
+
+      }
+
+      section figcaption {
+
+        margin-top:15px;
+
+      }
+
+      section img {
+
+        float:left;
+        margin: 0 15px 15px 0;
+        width: 150px;
+        height: 190px;
+
+      }
+
+      section figure {
+
+        display:none;
+        margin:0;
+        padding:0;
+
+      }
+
+      section p.keep-learning{
+
+          text-align: center;
+          margin-top:5px;
+          font-weight:bold;
+      }
+
+      section a {
+
+        text-decoration:none;
+        color:white;
+        
+      }

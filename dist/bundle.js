@@ -3823,7 +3823,7 @@ System.get("traceur-runtime@0.0.88/src/runtime/polyfills/polyfills.js" + '');
   System.register(...);
 }); */
 
-(['src/entry'], function(System) {
+(['public/src/entry'], function(System) {
 
 System.register("npm:process@0.10.1/browser", [], true, function(require, exports, module) {
   var global = System.global,
@@ -8288,10 +8288,10 @@ System.register("npm:lodash@3.8.0", ["npm:lodash@3.8.0/index"], true, function(r
   return module.exports;
 });
 
-System.register("src/util", [], function($__export) {
+System.register("public/src/util", [], function($__export) {
   "use strict";
   var $__7 = $traceurRuntime.initGeneratorFunction(dictEntriesGen);
-  var __moduleName = "src/util";
+  var __moduleName = "public/src/util";
   function dictEntriesGen(obj) {
     var $__3,
         $__4,
@@ -8384,9 +8384,9 @@ System.register("src/util", [], function($__export) {
   };
 });
 
-System.register("src/canvas", ["npm:lodash@3.8.0", "src/algorithm"], function($__export) {
+System.register("public/src/canvas", ["npm:lodash@3.8.0", "public/src/algorithm"], function($__export) {
   "use strict";
-  var __moduleName = "src/canvas";
+  var __moduleName = "public/src/canvas";
   var _,
       algorithm;
   function Canvas() {}
@@ -8400,17 +8400,17 @@ System.register("src/canvas", ["npm:lodash@3.8.0", "src/algorithm"], function($_
       'use strict';
       ;
       Canvas.colors = {
-        dead: '#FFFFFF',
-        trail: ['#B5ECA2'],
-        alive: ['#9898FF', '#8585FF', '#7272FF', '#5F5FFF', '#4C4CFF', '#3939FF', '#2626FF', '#1313FF', '#0000FF', '#1313FF', '#2626FF', '#3939FF', '#4C4CFF', '#5F5FFF', '#7272FF', '#8585FF']
+        dead: '#242424',
+        trail: ['#2E2E2E'],
+        alive: ['#FF39E1', '#E131C7']
       };
       Canvas.prototype.init = function init() {
         this.canvas = document.getElementById('gameOfLife');
         this.context = this.canvas.getContext('2d');
-        this.cellSize = 4;
+        this.cellSize = 8;
         this.cellSpace = 1;
-        this.rows = 86;
-        this.columns = 180;
+        this.rows = window.innerHeight / (this.cellSize + this.cellSpace);
+        this.columns = window.innerWidth / (this.cellSize + this.cellSpace);
         this.clearWorld();
         return this;
       };
@@ -8426,11 +8426,12 @@ System.register("src/canvas", ["npm:lodash@3.8.0", "src/algorithm"], function($_
       };
       Canvas.prototype.drawWorld = function drawWorld(state) {
         var $__0 = this;
-        this.width = 1 + (this.cellSpace * this.columns) + (this.cellSize * this.columns);
+        this.width = window.innerWidth;
         this.canvas.setAttribute('width', this.width);
-        this.height = 1 + (this.cellSpace * this.rows) + (this.cellSize * this.rows);
-        this.canvas.getAttribute('height', this.height);
-        this.context.fillStyle = '#F3F3F3';
+        this.height = window.innerHeight;
+        this.canvas.setAttribute('height', this.height);
+        window.addEventListener('resize', (function() {}));
+        this.context.fillStyle = '#242424';
         this.context.fillRect(0, 0, this.width, this.height);
         _.forEach(_.range(this.columns), (function(i) {
           _.forEach(_.range($__0.rows), (function(j) {
@@ -8487,9 +8488,9 @@ System.register("src/canvas", ["npm:lodash@3.8.0", "src/algorithm"], function($_
   };
 });
 
-System.register("src/algorithm", ["npm:lodash@3.8.0", "src/util"], function($__export) {
+System.register("public/src/algorithm", ["npm:lodash@3.8.0", "public/src/util"], function($__export) {
   "use strict";
-  var __moduleName = "src/algorithm";
+  var __moduleName = "public/src/algorithm";
   var _,
       util,
       ADD_NEW_CELL;
@@ -8592,80 +8593,61 @@ System.register("src/algorithm", ["npm:lodash@3.8.0", "src/util"], function($__e
   }
   function getNeighboursFromAlive(x, y, i, possibleNeighboursList, state, topPointer, bottomPointer) {
     var neighbours = 0;
-    var k;
+    var update = (function(s, k, type) {
+      if (type == 'middle') {
+        if (s >= (x - 1)) {
+          if (s === (x - 1)) {
+            possibleNeighboursList[3] = undefined;
+            neighbours++;
+          }
+          if (s === (x + 1)) {
+            possibleNeighboursList[4] = undefined;
+            neighbours++;
+          }
+          if (s > (x + 1))
+            return ;
+        }
+        return ;
+      }
+      if (s >= (x - 1)) {
+        if (s === (x - 1)) {
+          possibleNeighboursList[type == 'top' ? 0 : 5] = undefined;
+          type == 'top' ? topPointer += (k + 1) : bottomPointer += (k + 1);
+          neighbours++;
+        }
+        if (s === x) {
+          possibleNeighboursList[type == 'top' ? 1 : 6] = undefined;
+          type == 'top' ? topPointer += k : bottomPointer += k;
+          neighbours++;
+        }
+        if (s === (x + 1)) {
+          possibleNeighboursList[type == 'top' ? 2 : 7] = undefined;
+          if (k == 1) {
+            type == 'top' ? topPointer = 1 : bottomPointer = 1;
+          } else {
+            type == 'top' ? topPointer += (k - 1) : bottomPointer += (k - 1);
+          }
+          neighbours++;
+        }
+        if (s > (x + 1))
+          return ;
+      }
+    });
     if (state[i - 1] !== undefined) {
       if (state[i - 1][0] === (y - 1)) {
-        for (k = topPointer; k < state[i - 1].length; k++) {
-          if (state[i - 1][k] >= (x - 1)) {
-            if (state[i - 1][k] === (x - 1)) {
-              possibleNeighboursList[0] = undefined;
-              topPointer = k + 1;
-              neighbours++;
-            }
-            if (state[i - 1][k] === x) {
-              possibleNeighboursList[1] = undefined;
-              topPointer = k;
-              neighbours++;
-            }
-            if (state[i - 1][k] === (x + 1)) {
-              possibleNeighboursList[2] = undefined;
-              if (k == 1) {
-                topPointer = 1;
-              } else {
-                topPointer = k - 1;
-              }
-              neighbours++;
-            }
-            if (state[i - 1][k] > (x + 1)) {
-              break;
-            }
-          }
-        }
+        _.forEach(_.drop(state[i - 1], topPointer), (function(s, k) {
+          return update(s, k, 'top');
+        }));
       }
     }
-    for (k = 1; k < state[i].length; k++) {
-      if (state[i][k] >= (x - 1)) {
-        if (state[i][k] === (x - 1)) {
-          possibleNeighboursList[3] = undefined;
-          neighbours++;
-        }
-        if (state[i][k] === (x + 1)) {
-          possibleNeighboursList[4] = undefined;
-          neighbours++;
-        }
-        if (state[i][k] > (x + 1)) {
-          break;
-        }
-      }
-    }
+    _.forEach(_.rest(state[i]), (function(s, k) {
+      return update(s, k, 'middle');
+    }));
     if (state[i + 1] !== undefined) {
       if (state[i + 1][0] === (y + 1)) {
-        for (k = bottomPointer; k < state[i + 1].length; k++) {
-          if (state[i + 1][k] >= (x - 1)) {
-            if (state[i + 1][k] === (x - 1)) {
-              possibleNeighboursList[5] = undefined;
-              bottomPointer = k + 1;
-              neighbours++;
-            }
-            if (state[i + 1][k] === x) {
-              possibleNeighboursList[6] = undefined;
-              bottomPointer = k;
-              neighbours++;
-            }
-            if (state[i + 1][k] === (x + 1)) {
-              possibleNeighboursList[7] = undefined;
-              if (k == 1) {
-                bottomPointer = 1;
-              } else {
-                bottomPointer = k - 1;
-              }
-              neighbours++;
-            }
-            if (state[i + 1][k] > (x + 1)) {
-              break;
-            }
-          }
-        }
+        _.forEach(_.drop(state[i + 1], bottomPointer), (function(s, k) {
+          return update(s, k, 'bottom');
+        }));
       }
     }
     return neighbours;
@@ -8711,9 +8693,9 @@ System.register("src/algorithm", ["npm:lodash@3.8.0", "src/util"], function($__e
   };
 });
 
-System.register("src/game", ["src/algorithm", "src/canvas", "npm:lodash@3.8.0"], function($__export) {
+System.register("public/src/game", ["public/src/algorithm", "public/src/canvas", "npm:lodash@3.8.0"], function($__export) {
   "use strict";
-  var __moduleName = "src/game";
+  var __moduleName = "public/src/game";
   var algorithm,
       canvas,
       _;
@@ -8755,9 +8737,9 @@ System.register("src/game", ["src/algorithm", "src/canvas", "npm:lodash@3.8.0"],
   };
 });
 
-System.register("src/entry", ["src/game"], function($__export) {
+System.register("public/src/entry", ["public/src/game"], function($__export) {
   "use strict";
-  var __moduleName = "src/entry";
+  var __moduleName = "public/src/entry";
   var runGame;
   return {
     setters: [function($__m) {

@@ -4,7 +4,14 @@
     
     <title>Life Game Experiment</title>
     
+    <!-- @if DEBUG -->
     <link rel="stylesheet" type="text/css" href="public/style.css"/>
+    <!-- @endif -->
+
+    <!-- @if !DEBUG -->
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <!-- @endif -->
+
 </head>
 <body>
 
@@ -29,8 +36,15 @@
   </section>
   <canvas id="gameOfLife"></canvas>
 
+  <!-- @if DEBUG -->
   <script src="jspm_packages/system.js"></script>
   <script src="config.js"></script>
   <script>System.import('public/src/entry');</script>
+  <!-- @endif -->
+
+  <!-- @if !DEBUG -->
+  <script src="bundle.min.js"></script>
+  <!-- @endif -->
+
 </body>
 </html>

@@ -60,6 +60,12 @@ Canvas.prototype.drawWorld = function drawWorld(state) {
   this.height = window.innerHeight;
   this.canvas.setAttribute('height', this.height);
 
+  window.addEventListener('resize', () => {
+
+    // this.drawWorld(state);
+
+  });
+
   // Fill background
   this.context.fillStyle = '#242424';
   this.context.fillRect(0, 0, this.width, this.height);
