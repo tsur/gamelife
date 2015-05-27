@@ -23,6 +23,7 @@
   "dependencies": {},
   "devDependencies": {
     "cssnext": "^1.5.1",
+    "datauri": "^0.7.1",
     "http-server": "^0.8.0",
     "jspm": "^0.15.6",
     "preprocess": "^2.1.1",

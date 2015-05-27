@@ -8488,6 +8488,37 @@ System.register("public/src/canvas", ["npm:lodash@3.8.0", "public/src/algorithm"
   };
 });
 
+System.register("public/src/actions", [], function($__export) {
+  "use strict";
+  var __moduleName = "public/src/actions";
+  function clickEventListener(selector, handler) {
+    document.querySelector(selector).addEventListener('click', (function(e) {
+      return handler(e);
+    }));
+  }
+  function reload(event) {
+    console.log('click reload');
+  }
+  function start(event) {
+    console.log('click start');
+  }
+  function draw(event) {
+    console.log('click draw');
+  }
+  return {
+    setters: [],
+    execute: function() {
+      'use strict';
+      $__export('default', function() {
+        clickEventListener('.actions-reload', reload);
+        clickEventListener('.actions-start', start);
+        clickEventListener('.actions-draw', draw);
+      });
+      ;
+    }
+  };
+});
+
 System.register("public/src/algorithm", ["npm:lodash@3.8.0", "public/src/util"], function($__export) {
   "use strict";
   var __moduleName = "public/src/algorithm";
@@ -8737,16 +8768,22 @@ System.register("public/src/game", ["public/src/algorithm", "public/src/canvas",
   };
 });
 
-System.register("public/src/entry", ["public/src/game"], function($__export) {
+System.register("public/src/entry", ["public/src/game", "public/src/actions"], function($__export) {
   "use strict";
   var __moduleName = "public/src/entry";
-  var runGame;
+  var runGame,
+      runActions;
   return {
     setters: [function($__m) {
       runGame = $__m.default;
+    }, function($__m) {
+      runActions = $__m.default;
     }],
     execute: function() {
-      runGame();
+      window.onload = (function() {
+        runActions();
+        runGame();
+      });
     }
   };
 });

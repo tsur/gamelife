@@ -12,27 +12,37 @@
     <link rel="stylesheet" type="text/css" href="style.css"/>
     <!-- @endif -->
 
+    <!-- @if DEBUG -->
+    <script src="jspm_packages/system.js"></script>
+    <script src="config.js"></script>
+    <script>System.import('public/src/entry');</script>
+    <!-- @endif -->
+
+    <!-- @if !DEBUG -->
+    <script src="bundle.min.js"></script>
+    <!-- @endif -->
+
 </head>
 <body>
 
   <section>
 
       <figure>
-        <img src="public/assets/conway.jpg" alt="John Horton Conway"/>
+
+        <!-- @if !DEBUG -->
+        <img src="<!-- @echo IMG_SRC -->" alt="John Horton Conway" title="John Horton Conway" />
+        <!-- @endif -->
+
+        <!-- @if DEBUG -->
+        <img src="public/assets/conway.jpg" alt="John Horton Conway" title="John Horton Conway" />
+        <!-- @endif -->
+        
       </figure>
 
       <div class="actions-draw">
         
         <div class="ch-item">
-          <div class="ch-info-wrap">
-            <div class="ch-info">
-              <div class="ch-info-front"></div>
-              <div class="ch-info-back">
-                <h3>Leadership Series #3</h3>
-                <p>by Dustin Leer <a href="http://drbl.in/dfhn">View on Dribbble</a></p>
-              </div>
-            </div>
-          </div>
+          <div class="ch-info-wrap"><span class="draw">&#9998;</span></div>
         </div>
 
       </div>
@@ -40,31 +50,15 @@
       <div class="actions-start">
         
         <div class="ch-item">
-          <div class="ch-info-wrap">
-            <div class="ch-info">
-              <div class="ch-info-front"></div>
-              <div class="ch-info-back">
-                <h3>Leadership Series #3</h3>
-                <p>by Dustin Leer <a href="http://drbl.in/dfhn">View on Dribbble</a></p>
-              </div>
-            </div>
-          </div>
+          <div class="ch-info-wrap"><span class="start">&#8627;</span></div>
         </div>
 
       </div>
 
-      <div class="actions-default">
+      <div class="actions-reload">
         
         <div class="ch-item">
-          <div class="ch-info-wrap">
-            <div class="ch-info">
-              <div class="ch-info-front"></div>
-              <div class="ch-info-back">
-                <h3>Leadership Series #3</h3>
-                <p>by Dustin Leer <a href="http://drbl.in/dfhn">View on Dribbble</a></p>
-              </div>
-            </div>
-          </div>
+          <div class="ch-info-wrap"><span class="reload">&#8634;</span></div>
         </div>
 
       </div>
@@ -84,16 +78,6 @@
 
   </section>
   <canvas id="gameOfLife"></canvas>
-
-  <!-- @if DEBUG -->
-  <script src="jspm_packages/system.js"></script>
-  <script src="config.js"></script>
-  <script>System.import('public/src/entry');</script>
-  <!-- @endif -->
-
-  <!-- @if !DEBUG -->
-  <script src="build.min.js"></script>
-  <!-- @endif -->
 
 </body>
 </html>

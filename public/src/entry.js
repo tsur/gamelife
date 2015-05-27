@@ -1,4 +1,13 @@
 import runGame from './game';
+import runActions from './actions';
 
 // Kick it off after window object has loaded (all resources were loaded)
-runGame();
+window.onload = () => {
+
+  runActions();
+  runGame();
+
+};
+
+// @TODO: Remove on production!
+window.onload();
