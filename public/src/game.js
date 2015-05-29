@@ -3,6 +3,10 @@
 import * as algorithm from './algorithm';
 import canvas from './canvas';
 import _ from 'lodash';
+import {
+  session
+}
+from './util';
 
 function run(state) {
 
@@ -24,13 +28,14 @@ function run(state) {
   });
 
   // Flow Control
-  setTimeout(() => run(next.state), 300);
+  session.next = next.state;
+  session.timer = setTimeout(() => run(next.state), 300);
 
 }
 
-function init(initialState) {
+function init() {
 
-  const state = algorithm.init(initialState);
+  const state = algorithm.init();
 
   canvas.init().drawWorld(state);
 
@@ -39,4 +44,4 @@ function init(initialState) {
 };
 
 export
-default (state) => run(init(state));
+default (state) => run(state ? state : init());

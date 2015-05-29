@@ -29,6 +29,12 @@ Canvas.prototype.init = function init() {
 
 };
 
+Canvas.prototype.getElement = function getElement() {
+
+  return this.canvas;
+
+};
+
 Canvas.prototype.clearWorld = function clearWorld() {
 
   // Init ages (Canvas reference)
@@ -46,6 +52,43 @@ Canvas.prototype.clearWorld = function clearWorld() {
     });
 
   });
+
+  return this;
+
+};
+
+Canvas.prototype.freeDraw = function(e, state) {
+
+  let x;
+  let y;
+
+  if (e.pageX || e.pageY) {
+
+    x = e.pageX;
+    y = e.pageY;
+
+  } else {
+
+    x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+    y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+
+  }
+
+  x -= this.canvas.offsetLeft;
+  y -= this.canvas.offsetTop;
+
+  x = Math.floor(x / (this.cellSize + this.cellSpace));
+  y = Math.floor(y / (this.cellSize + this.cellSpace));
+
+  // console.log(x, y);
+
+  const newState = algorithm.switchToAlive(x, y, state);
+
+  // console.log(newState);
+
+  this.changeCelltoAlive(x, y);
+
+  return newState;
 
 };
 

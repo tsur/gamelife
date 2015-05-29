@@ -103,12 +103,37 @@ section div.actions-start{
 
 }
 
+section div.actions-start span.hidden{
+
+  display: none;
+
+}
+
+section div.actions-start span.pause{
+
+  left:12px;
+  top:4px;
+
+}
+
+section div.actions-start span.play{
+
+  left:7px;
+  top:7px;
+
+}
 
 section div.actions-reload{
 
   top: 120px;
   left: 185px;
 
+}
+
+section div.ch-item{
+
+  cursor:pointer;
+  
 }
 
 .ch-info-wrap{
@@ -136,7 +161,6 @@ section div.actions-reload{
   position:relative;
   left: 8px;
   color: #242424;
-  cursor:pointer;
 
 }
 

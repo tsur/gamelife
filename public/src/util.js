@@ -7,6 +7,9 @@ function * dictEntriesGen(obj) {
 
 }
 
+export
+let session = new Object();
+
 // Generator comprehensions (ES7)
 // export
 

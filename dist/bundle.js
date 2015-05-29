@@ -8292,6 +8292,7 @@ System.register("public/src/util", [], function($__export) {
   "use strict";
   var $__7 = $traceurRuntime.initGeneratorFunction(dictEntriesGen);
   var __moduleName = "public/src/util";
+  var session;
   function dictEntriesGen(obj) {
     var $__3,
         $__4,
@@ -8380,6 +8381,8 @@ System.register("public/src/util", [], function($__export) {
   return {
     setters: [],
     execute: function() {
+      session = new Object();
+      $__export("session", session);
     }
   };
 });
@@ -8414,6 +8417,9 @@ System.register("public/src/canvas", ["npm:lodash@3.8.0", "public/src/algorithm"
         this.clearWorld();
         return this;
       };
+      Canvas.prototype.getElement = function getElement() {
+        return this.canvas;
+      };
       Canvas.prototype.clearWorld = function clearWorld() {
         var $__0 = this;
         this.age = [];
@@ -8423,6 +8429,25 @@ System.register("public/src/canvas", ["npm:lodash@3.8.0", "public/src/algorithm"
             $__0.age[i][j] = 0;
           }));
         }));
+        return this;
+      };
+      Canvas.prototype.freeDraw = function(e, state) {
+        var x;
+        var y;
+        if (e.pageX || e.pageY) {
+          x = e.pageX;
+          y = e.pageY;
+        } else {
+          x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+          y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+        x -= this.canvas.offsetLeft;
+        y -= this.canvas.offsetTop;
+        x = Math.floor(x / (this.cellSize + this.cellSpace));
+        y = Math.floor(y / (this.cellSize + this.cellSpace));
+        var newState = algorithm.switchToAlive(x, y, state);
+        this.changeCelltoAlive(x, y);
+        return newState;
       };
       Canvas.prototype.drawWorld = function drawWorld(state) {
         var $__0 = this;
@@ -8488,27 +8513,72 @@ System.register("public/src/canvas", ["npm:lodash@3.8.0", "public/src/algorithm"
   };
 });
 
-System.register("public/src/actions", [], function($__export) {
+System.register("public/src/actions", ["npm:lodash@3.8.0", "public/src/game", "public/src/canvas", "public/src/algorithm", "public/src/util"], function($__export) {
   "use strict";
   var __moduleName = "public/src/actions";
+  var _,
+      runGame,
+      canvas,
+      switchToAlive,
+      session,
+      playIcon,
+      pauseIcon,
+      drawEventListener;
   function clickEventListener(selector, handler) {
     document.querySelector(selector).addEventListener('click', (function(e) {
       return handler(e);
     }));
   }
-  function reload(event) {
-    console.log('click reload');
+  function draw(event) {
+    clearInterval(session.timer);
+    canvas.clearWorld().drawWorld();
+    session.drawing = [];
+    canvas.getElement().addEventListener('click', drawEventListener, false);
+    playIcon.classList.remove('hidden');
+    pauseIcon.classList.add('hidden');
   }
   function start(event) {
-    console.log('click start');
+    if (_.contains(playIcon.classList, 'hidden')) {
+      clearInterval(session.timer);
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+    } else {
+      canvas.getElement().removeEventListener('click', drawEventListener, false);
+      runGame(session.drawing ? session.drawing : session.next);
+      playIcon.classList.add('hidden');
+      pauseIcon.classList.remove('hidden');
+    }
   }
-  function draw(event) {
-    console.log('click draw');
+  function pause(event) {
+    clearInterval(session.timer);
+  }
+  function reload(event) {
+    clearInterval(session.timer);
+    session.drawing = null;
+    canvas.getElement().removeEventListener('click', drawEventListener, false);
+    runGame();
+    playIcon.classList.add('hidden');
+    pauseIcon.classList.remove('hidden');
   }
   return {
-    setters: [],
+    setters: [function($__m) {
+      _ = $__m.default;
+    }, function($__m) {
+      runGame = $__m.default;
+    }, function($__m) {
+      canvas = $__m.default;
+    }, function($__m) {
+      switchToAlive = $__m.switchToAlive;
+    }, function($__m) {
+      session = $__m.session;
+    }],
     execute: function() {
       'use strict';
+      playIcon = document.querySelector('.actions-start span.play');
+      pauseIcon = document.querySelector('.actions-start span.pause');
+      drawEventListener = (function(e) {
+        return session.drawing = canvas.init().freeDraw(e, session.drawing);
+      });
       $__export('default', function() {
         clickEventListener('.actions-reload', reload);
         clickEventListener('.actions-start', start);
@@ -8724,12 +8794,13 @@ System.register("public/src/algorithm", ["npm:lodash@3.8.0", "public/src/util"],
   };
 });
 
-System.register("public/src/game", ["public/src/algorithm", "public/src/canvas", "npm:lodash@3.8.0"], function($__export) {
+System.register("public/src/game", ["public/src/algorithm", "public/src/canvas", "npm:lodash@3.8.0", "public/src/util"], function($__export) {
   "use strict";
   var __moduleName = "public/src/game";
   var algorithm,
       canvas,
-      _;
+      _,
+      session;
   function run(state) {
     var next = algorithm.nextGeneration(state);
     _.forEach(next.changes, (function(e) {
@@ -8741,12 +8812,13 @@ System.register("public/src/game", ["public/src/algorithm", "public/src/canvas",
         return canvas.keepCellAlive(x, y);
       canvas.changeCelltoDead(x, y);
     }));
-    setTimeout((function() {
+    session.next = next.state;
+    session.timer = setTimeout((function() {
       return run(next.state);
     }), 300);
   }
-  function init(initialState) {
-    var state = algorithm.init(initialState);
+  function init() {
+    var state = algorithm.init();
     canvas.init().drawWorld(state);
     return state;
   }
@@ -8757,12 +8829,14 @@ System.register("public/src/game", ["public/src/algorithm", "public/src/canvas",
       canvas = $__m.default;
     }, function($__m) {
       _ = $__m.default;
+    }, function($__m) {
+      session = $__m.session;
     }],
     execute: function() {
       'use strict';
       ;
       $__export('default', (function(state) {
-        return run(init(state));
+        return run(state ? state : init());
       }));
     }
   };
@@ -8781,9 +8855,9 @@ System.register("public/src/entry", ["public/src/game", "public/src/actions"], f
     }],
     execute: function() {
       window.onload = (function() {
-        runActions();
-        runGame();
+        return runActions(runGame());
       });
+      window.onload();
     }
   };
 });
