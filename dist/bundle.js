@@ -8521,15 +8521,13 @@ System.register("public/src/actions", ["npm:lodash@3.8.0", "public/src/game", "p
       canvas,
       switchToAlive,
       session,
-      playIcon,
-      pauseIcon,
       drawEventListener;
-  function clickEventListener(selector, handler) {
+  function clickEventListener(selector, handler, playIcon, pauseIcon) {
     document.querySelector(selector).addEventListener('click', (function(e) {
-      return handler(e);
+      return handler(e, playIcon, pauseIcon);
     }));
   }
-  function draw(event) {
+  function draw(event, playIcon, pauseIcon) {
     clearInterval(session.timer);
     canvas.clearWorld().drawWorld();
     session.drawing = [];
@@ -8537,7 +8535,7 @@ System.register("public/src/actions", ["npm:lodash@3.8.0", "public/src/game", "p
     playIcon.classList.remove('hidden');
     pauseIcon.classList.add('hidden');
   }
-  function start(event) {
+  function start(event, playIcon, pauseIcon) {
     if (_.contains(playIcon.classList, 'hidden')) {
       clearInterval(session.timer);
       playIcon.classList.remove('hidden');
@@ -8552,7 +8550,7 @@ System.register("public/src/actions", ["npm:lodash@3.8.0", "public/src/game", "p
   function pause(event) {
     clearInterval(session.timer);
   }
-  function reload(event) {
+  function reload(event, playIcon, pauseIcon) {
     clearInterval(session.timer);
     session.drawing = null;
     canvas.getElement().removeEventListener('click', drawEventListener, false);
@@ -8574,15 +8572,15 @@ System.register("public/src/actions", ["npm:lodash@3.8.0", "public/src/game", "p
     }],
     execute: function() {
       'use strict';
-      playIcon = document.querySelector('.actions-start span.play');
-      pauseIcon = document.querySelector('.actions-start span.pause');
       drawEventListener = (function(e) {
         return session.drawing = canvas.init().freeDraw(e, session.drawing);
       });
       $__export('default', function() {
-        clickEventListener('.actions-reload', reload);
-        clickEventListener('.actions-start', start);
-        clickEventListener('.actions-draw', draw);
+        var playIcon = document.querySelector('.actions-start span.play');
+        var pauseIcon = document.querySelector('.actions-start span.pause');
+        clickEventListener('.actions-reload', reload, playIcon, pauseIcon);
+        clickEventListener('.actions-start', start, playIcon, pauseIcon);
+        clickEventListener('.actions-draw', draw, playIcon, pauseIcon);
       });
       ;
     }
@@ -8857,7 +8855,6 @@ System.register("public/src/entry", ["public/src/game", "public/src/actions"], f
       window.onload = (function() {
         return runActions(runGame());
       });
-      window.onload();
     }
   };
 });

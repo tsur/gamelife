@@ -12,18 +12,15 @@ import {
 }
 from './util';
 
-const playIcon = document.querySelector('.actions-start span.play');
-const pauseIcon = document.querySelector('.actions-start span.pause');
+function clickEventListener(selector, handler, playIcon, pauseIcon) {
 
-function clickEventListener(selector, handler) {
-
-  document.querySelector(selector).addEventListener('click', (e) => handler(e));
+  document.querySelector(selector).addEventListener('click', (e) => handler(e, playIcon, pauseIcon));
 
 }
 
 const drawEventListener = (e) => session.drawing = canvas.init().freeDraw(e, session.drawing);
 
-function draw(event) {
+function draw(event, playIcon, pauseIcon) {
 
   clearInterval(session.timer);
 
@@ -38,7 +35,7 @@ function draw(event) {
 
 }
 
-function start(event) {
+function start(event, playIcon, pauseIcon) {
 
   //Pause it
   if (_.contains(playIcon.classList, 'hidden')) {
@@ -67,7 +64,7 @@ function pause(event) {
 
 }
 
-function reload(event) {
+function reload(event, playIcon, pauseIcon) {
 
   clearInterval(session.timer);
 
@@ -86,8 +83,11 @@ default
 
 function() {
 
-  clickEventListener('.actions-reload', reload);
-  clickEventListener('.actions-start', start);
-  clickEventListener('.actions-draw', draw);
+  const playIcon = document.querySelector('.actions-start span.play');
+  const pauseIcon = document.querySelector('.actions-start span.pause');
+
+  clickEventListener('.actions-reload', reload, playIcon, pauseIcon);
+  clickEventListener('.actions-start', start, playIcon, pauseIcon);
+  clickEventListener('.actions-draw', draw, playIcon, pauseIcon);
 
 };
