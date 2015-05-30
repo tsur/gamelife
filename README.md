@@ -8,7 +8,7 @@ To deploy it on your local machine, just follow the steps below:
 
 ```bash
 git clone https://github.com/Tsur/gamelife.git 
-cd gamelife && npm run deploy
+cd gamelife && npm run deploy:local
 ```
 Now go to your browser on localhost:8080/dist to play the production version. Open your browser on localhost:8080 to start developing. You may now modify the source code and the browser will refresh automatically. Once you're done, build the project. 
 
