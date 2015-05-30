@@ -4,10 +4,24 @@
     
     <title>Life Game Experiment</title>
     
+    <!-- @if DEBUG -->
     <link rel="stylesheet" type="text/css" href="public/style.css"/>
+    <!-- @endif -->
+
+    <!-- @if !DEBUG -->
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <!-- @endif -->
+
+    <!-- @if DEBUG -->
     <script src="jspm_packages/system.js"></script>
     <script src="config.js"></script>
     <script>System.import('public/src/entry');</script>
+    <!-- @endif -->
+
+    <!-- @if !DEBUG -->
+    <script src="bundle.min.js"></script>
+    <!-- @endif -->
+
 </head>
 <body>
 
@@ -15,7 +29,14 @@
 
       <figure>
 
+        <!-- @if !DEBUG -->
+        <img src="<!-- @echo IMG_SRC -->" alt="John Horton Conway" title="John Horton Conway" />
+        <!-- @endif -->
+
+        <!-- @if DEBUG -->
         <img src="public/assets/conway.jpg" alt="John Horton Conway" title="John Horton Conway" />
+        <!-- @endif -->
+
       </figure>
 
       <div class="actions-draw">

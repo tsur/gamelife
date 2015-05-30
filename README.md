@@ -1,29 +1,30 @@
 # The Game Of Life
 
-An implementantion experiment for the conway's game of life on ES6
+An experimental implementantion for the conway's game of life on ES6. A demo is available on. You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
 
+# Setting up
 
-# Set Up:
-
-```bash
-npm i -g http-server jspm testem
-```
-
-# Run:
+To deploy it on your local machine, just follow the steps below:
 
 ```bash
-npm run start
+git clone https://github.com/Tsur/gamelife.git 
+cd gamelife && npm run deploy:local
 ```
+Now go to your browser on localhost:8080/dist to play the production version. Open your browser on localhost:8080 to start developing. You may now modify the source code and the browser will refresh automatically. Once you're done, build the project. 
 
-Point now your browser to localhost:8080
+** NOTE: You will need LiveReload Plugin from chrome-store to enable live reloading
 
-# Build
+# Building
+
+Once you have ended adding new features, fixing issues or refactoring code, just build the project:
 
 ```bash
 npm run build
 ```
 
-# Test:
+If the command above was ok, the bundle.js and bundle.min.js files have been now generated under the dist folder. That's all needed along the index.html file to run the game of life experiment.
+
+# Testing
 
 ```bash
 npm run test

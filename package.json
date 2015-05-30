@@ -2,22 +2,32 @@
   "name": "gameOfLife",
   "version": "0.0.1",
   "description": "Conway's game of life implementation",
-  "main": "lib/entry.js",
+  "main": "src/entry.js",
   "scripts": {
-    "start": "jspm install && npm run server",
-    "build-js": "jspm bundle-sfx src/entry dist/bundle.js && jspm bundle-sfx src/entry dist/bundle.min.js --minify",
-    "build-js:stable": "jspm bundle-sfx src/stable/entry dist/bundle.js",
-    "watch-js": "watch 'npm run build-js:stable' src",
+    "setup": "npm install && jspm install",
+    "serve": "http-server ./ & livereload",
+    "deploy:local": "npm run setup && npm build && npm serve",
+    "build": "npm run build:js && npm run build:html && npm run build:css",
+    "build:js": "jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.js && jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.min.js --minify",
+    "build:css": "cssnext public/style.css > dist/style.css",
+    "build:html": "node preprocess.js",
     "test": "testem",
-    "server": "http-server"
+    "start": "http-server dist"
+  },
+  "config": {
+    "entry": "public/src/entry",
+    "bundle": "dist/bundle"
   },
   "repository": "",
   "author": "Zuri Pabon",
   "license": "",
   "dependencies": {},
   "devDependencies": {
+    "cssnext": "^1.5.1",
+    "datauri": "^0.7.1",
     "http-server": "^0.8.0",
     "jspm": "^0.15.6",
+    "preprocess": "^2.1.1",
     "testem": "^0.8.3",
     "watch": "^0.16.0"
   },
