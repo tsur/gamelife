@@ -1,6 +1,6 @@
 # The Game Of Life
 
-An experimental implementantion for the conway's game of life on ES6. A demo is available [here](https://guarded-cliffs-6053.herokuapp.com/). You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
+An experimental implementantion for the conway's game of life on ES6. A demo is available [here](https://game-of-life-tsur.herokuapp.com/). You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
 
 # Setting up
 
