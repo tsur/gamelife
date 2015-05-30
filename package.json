@@ -10,7 +10,7 @@
   "scripts": {
     "setup": "npm install && jspm install",
     "serve": "http-server ./ & livereload",
-    "deploy:local": "npm run setup && npm build && npm serve",
+    "deploy:local": "npm run setup && npm run build && npm run serve",
     "deploy:remote": "git checkout master && git merge --no-ff develop -m 'Merged into develop' && git push origin master && git push heroku master && git checkout develop",
     "build": "npm run build:js && npm run build:html && npm run build:css",
     "build:js": "jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.js && jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.min.js --minify",
@@ -33,6 +33,7 @@
     "cssnext": "^1.5.1",
     "datauri": "^0.7.1",
     "jspm": "^0.15.6",
+    "livereload": "^0.3.7",
     "preprocess": "^2.1.1",
     "testem": "^0.8.3",
     "watch": "^0.16.0"
