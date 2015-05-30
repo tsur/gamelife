@@ -14,6 +14,12 @@ Now go to your browser on localhost:8080/dist to play the production version. Op
 
 ** NOTE: You will need LiveReload Plugin from chrome-store to enable live reloading
 
+To deploy it remotely, make sure you commit and/or push all your changes to the develop branch. Once your done, just run:
+
+```bash
+npm run deploy:remote
+```
+
 # Building
 
 Once you have ended adding new features, fixing issues or refactoring code, just build the project:
