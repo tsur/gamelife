@@ -11,6 +11,7 @@
     "setup": "npm install && jspm install",
     "serve": "http-server ./ & livereload",
     "deploy:local": "npm run setup && npm build && npm serve",
+    "deploy:remote": "git checkout master && git merge --no-ff develop -m 'Merged into develop' && git push origin master && git push heroku master && git checkout develop",
     "build": "npm run build:js && npm run build:html && npm run build:css",
     "build:js": "jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.js && jspm bundle-sfx $npm_package_config_entry $npm_package_config_bundle.min.js --minify",
     "build:css": "cssnext public/style.css > dist/style.css",
