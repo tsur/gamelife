@@ -1,6 +1,6 @@
 # The Game Of Life
 
-An experimental implementantion for the conway's game of life on ES6. A demo is available [here](https://guarded-cliffs-6053.herokuapp.com/). You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
+An experimental implementantion for the conway's game of life on ES6. A demo is available [here](https://game-of-life-tsur.herokuapp.com/). You may also download the project in zip format, then extract it and open the index.html file located on dist folder.
 
 # Setting up
 
@@ -13,6 +13,12 @@ cd gamelife && npm run deploy:local
 Now go to your browser on localhost:8080/dist to play the production version. Open your browser on localhost:8080 to start developing. You may now modify the source code and the browser will refresh automatically. Once you're done, build the project. 
 
 ** NOTE: You will need LiveReload Plugin from chrome-store to enable live reloading
+
+To deploy it remotely, make sure you commit and/or push all your changes to the develop branch. Once your done, just run:
+
+```bash
+npm run deploy:remote
+```
 
 # Building
 
