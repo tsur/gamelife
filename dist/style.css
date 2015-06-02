@@ -35,7 +35,7 @@ section {
 
 }
 
-section p, section figure {
+section p{
 
   color: #f3f3f3;
   padding:5px;
@@ -43,12 +43,6 @@ section p, section figure {
   font-family: monospace;
   text-align: left;
   text-rendering: geometricPrecision;
-
-}
-
-section figcaption {
-
-  margin-top:15px;
 
 }
 
@@ -164,21 +158,12 @@ section div.ch-item{
 .ch-info-wrap span{
   
   font-size: 22px;
-  position:relative;
-  left: 8px;
+  width: 33px;
+  height: 33px;
+  display: block;
+  line-height: 35px;
+  text-align:center;
   color: #242424;
-
-}
-
-.ch-info-wrap span.draw{
-  
-  top: 4px;
-
-}
-
-.ch-info-wrap span.start{
-  
-  top: 7px;
 
 }
 
@@ -188,4 +173,12 @@ section div.ch-item{
   box-shadow: 
     0 0 0 0 rgba(238,238,238,0.8), 
     inset 0 0 3px rgba(115,114, 23, 0.8);
+}
+
+section div.spliter {
+
+  width: 80%;
+  border-top:1px solid #EEEEEE;
+  border-top: 1px solid rgba(238,238,238,0.2);
+
 }
