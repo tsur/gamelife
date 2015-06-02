@@ -8855,7 +8855,6 @@ System.register("public/src/entry", ["public/src/game", "public/src/actions"], f
       window.onload = (function() {
         return runActions(runGame());
       });
-      window.onload();
     }
   };
 });
