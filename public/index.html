@@ -38,7 +38,7 @@
       <figure>
 
         <!-- @if !DEBUG -->
-        <img src="<!-- @echo IMG_SRC -->" alt="John Horton Conway" title="John Horton Conway" />
+        <img src="<!-- @echo IMG_PROFILE -->" alt="John Horton Conway" title="John Horton Conway" />
         <!-- @endif -->
 
         <!-- @if DEBUG -->
@@ -50,7 +50,17 @@
       <div class="actions-draw">
         
         <div class="ch-item">
-          <div class="ch-info-wrap"><span class="draw" title="Draw">&#9998;</span></div>
+          <div class="ch-info-wrap">
+
+            <!-- @if !DEBUG -->
+            <img class="draw" src="<!-- @echo IMG_EDIT -->" title="Draw" alt="Draw" />
+            <!-- @endif -->
+
+            <!-- @if DEBUG -->
+            <img class="draw" src="public/assets/edit.png" title="Draw" alt="Draw" />
+            <!-- @endif -->
+
+          </div>
         </div>
 
       </div>
@@ -58,7 +68,19 @@
       <div class="actions-start">
         
         <div class="ch-item">
-          <div class="ch-info-wrap"><span class="play hidden" title="Play">&#9678;</span><span class="pause" title="Pause">&#9673;</span></div>
+          <div class="ch-info-wrap">
+            
+            <!-- @if !DEBUG -->
+            <img class="play hidden" src="<!-- @echo IMG_PLAY -->" title="Play" alt="Play" />
+            <img class="pause" src="<!-- @echo IMG_PAUSE -->" title="Pause" alt="Pause" />
+            <!-- @endif -->
+
+            <!-- @if DEBUG -->
+            <img class="play hidden" src="public/assets/play.png" title="Play" alt="Play" />
+            <img class="pause" src="public/assets/pause.png" title="Pause" alt="Pause" />
+            <!-- @endif -->
+
+          </div>
         </div>
 
       </div>
@@ -66,7 +88,17 @@
       <div class="actions-reload">
         
         <div class="ch-item">
-          <div class="ch-info-wrap"><span class="reload" title="Reboot">&#8634;</span></div>
+          <div class="ch-info-wrap">
+
+            <!-- @if !DEBUG -->
+            <img class="reload" src="<!-- @echo IMG_RESTART -->" title="Restart" alt="Restart"  />
+            <!-- @endif -->
+
+            <!-- @if DEBUG -->
+            <img class="reload" src="public/assets/restart.png" title="Restart" alt="Restart"  />
+            <!-- @endif -->
+
+          </div>
         </div>
 
       </div>

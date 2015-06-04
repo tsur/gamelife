@@ -83,8 +83,8 @@ default
 
 function() {
 
-  const playIcon = document.querySelector('.actions-start span.play');
-  const pauseIcon = document.querySelector('.actions-start span.pause');
+  const playIcon = document.querySelector('.actions-start .play');
+  const pauseIcon = document.querySelector('.actions-start .pause');
 
   clickEventListener('.actions-reload', reload, playIcon, pauseIcon);
   clickEventListener('.actions-start', start, playIcon, pauseIcon);
