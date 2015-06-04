@@ -8576,8 +8576,8 @@ System.register("public/src/actions", ["npm:lodash@3.8.0", "public/src/game", "p
         return session.drawing = canvas.init().freeDraw(e, session.drawing);
       });
       $__export('default', function() {
-        var playIcon = document.querySelector('.actions-start span.play');
-        var pauseIcon = document.querySelector('.actions-start span.pause');
+        var playIcon = document.querySelector('.actions-start .play');
+        var pauseIcon = document.querySelector('.actions-start .pause');
         clickEventListener('.actions-reload', reload, playIcon, pauseIcon);
         clickEventListener('.actions-start', start, playIcon, pauseIcon);
         clickEventListener('.actions-draw', draw, playIcon, pauseIcon);

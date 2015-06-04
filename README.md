@@ -14,10 +14,13 @@ Now go to your browser on localhost:8080/dist to play the production version. Op
 
 ** NOTE: You will need LiveReload Plugin from chrome-store to enable live reloading
 
-To deploy it remotely, make sure you commit and/or push all your changes to the develop branch. Once your done, just run:
+To deploy it remotely, make sure you commit and/or push all your changes to the develop branch. Once your done, just run either or both of:
 
 ```bash
-npm run deploy:remote
+# Heroku app (first time you need to create the heroku app: heroku create)
+npm run deploy:heroku
+# Github Pages (first time you need to create it: git checkout -b gh-pages develop)
+npm run deploy:gh-pages
 ```
 
 # Building

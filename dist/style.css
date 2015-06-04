@@ -98,23 +98,9 @@ section div.actions-start{
 
 }
 
-section div.actions-start span.hidden{
+section div.actions-start img.hidden{
 
   display: none;
-
-}
-
-section div.actions-start span.pause{
-
-  left:12px;
-  top:4px;
-
-}
-
-section div.actions-start span.play{
-
-  left:7px;
-  top:7px;
 
 }
 
@@ -155,15 +141,16 @@ section div.ch-item{
 
 }
 
-.ch-info-wrap span{
+.ch-info-wrap img{
   
-  font-size: 22px;
-  width: 33px;
-  height: 33px;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin-top:-9px;
+  margin-left:-9px;
+  width: 18px;
+  height: 18px;
   display: block;
-  line-height: 35px;
-  text-align:center;
-  color: #242424;
 
 }
 
