@@ -18,7 +18,7 @@
     "build:css": "cssnext public/style.css > dist/style.css",
     "build:html": "node preprocess.js",
     "test": "testem",
-    "start": "http-server dist"
+    "start": "http-server ./"
   },
   "config": {
     "entry": "public/src/entry",
