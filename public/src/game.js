@@ -1,5 +1,6 @@
 'use strict';
 
+import mutableState from './state'
 import * as algorithm from './algorithm';
 import canvas from './canvas';
 import _ from 'lodash';
@@ -8,10 +9,33 @@ import {
 }
 from './util';
 
+function nextCicle(state) {
+
+  mutableState.set('cicle', function(){
+    return mutableState.get('cicle', 0) + 1;
+  }());
+
+  return algorithm.nextGeneration(state);
+
+}
+
 function run(state) {
 
+  let next,i;
+
+  next = {
+    state:state
+  };
+
+  i = 0;
+
   // Algorithm run
-  const next = algorithm.nextGeneration(state);
+  while(i < mutableState.get('plusInterval', 1)){
+    next = nextCicle(next.state);
+    i++;
+  }
+
+  console.log(mutableState.get('cicle', 0));
 
   // Canvas run
   _.forEach(next.changes, (e) => {
@@ -29,7 +53,7 @@ function run(state) {
 
   // Flow Control
   session.next = next.state;
-  session.timer = setTimeout(() => run(next.state), 300);
+  session.timer = setTimeout(() => run(next.state), mutableState.get('timeInterval'));
 
 }
 
