@@ -3,6 +3,7 @@
 import _ from 'lodash';
 import runGame from './game';
 import canvas from './canvas';
+import timeState from './state'
 import {
   switchToAlive
 }
@@ -78,6 +79,16 @@ function reload(event, playIcon, pauseIcon) {
 
 }
 
+function actionsSetupSpeed(event, playIcon, pauseIcon) {
+
+  var value = Number(document.querySelector('#actionsSetupSpeed').value);
+  console.log(value);
+
+  timeState.set('timeInterval', (value < 7)? [1000,600,300,150,75,30,0][value]: 0);
+  timeState.set('plusInterval',(value < 7)? 1: Math.pow(10, value - 6));
+
+}
+
 export
 default
 
@@ -89,5 +100,6 @@ function() {
   clickEventListener('.actions-reload', reload, playIcon, pauseIcon);
   clickEventListener('.actions-start', start, playIcon, pauseIcon);
   clickEventListener('.actions-draw', draw, playIcon, pauseIcon);
+  clickEventListener('.actions-setup-speed', actionsSetupSpeed, playIcon, pauseIcon);
 
 };

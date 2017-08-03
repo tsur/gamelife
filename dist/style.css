@@ -27,7 +27,6 @@ section {
   left:30px;
   width: 240px;
   height: 100%;
-  background-color:#000000;
   background-color: rgba(0, 0, 0, 0.65);
   padding:20px;
   padding-top: 0;
@@ -133,8 +132,6 @@ section div.ch-item{
   top: 20px;
   left: 20px;
   background-color: #eee;
-  box-shadow:0 0 0 7px rgba(255,255,255,0.2), 
-    inset 0 0 3px #737217;
   box-shadow: 
     0 0 0 7px rgba(255,255,255,0.2), 
     inset 0 0 3px rgba(115,114, 23, 0.8);
@@ -155,8 +152,6 @@ section div.ch-item{
 }
 
 .ch-item:hover .ch-info-wrap {
-  box-shadow:0 0 0 0 rgba(238,238,238,0.8), 
-    inset 0 0 3px #737217;
   box-shadow: 
     0 0 0 0 rgba(238,238,238,0.8), 
     inset 0 0 3px rgba(115,114, 23, 0.8);
@@ -165,7 +160,6 @@ section div.ch-item{
 section div.spliter {
 
   width: 80%;
-  border-top:1px solid #EEEEEE;
   border-top: 1px solid rgba(238,238,238,0.2);
 
 }
